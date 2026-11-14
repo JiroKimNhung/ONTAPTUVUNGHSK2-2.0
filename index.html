@@ -80,6 +80,8 @@
       display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
       border: 1.5px solid transparent; position: relative;
     }
+    .list-item { cursor: pointer; }
+    .list-item:active { transform: scale(0.96); }
     .list-item .card-icon { top: 3px; left: 5px; font-size: 12px; }
     .list-item .hanzi-small { font-family: var(--font-hanzi); font-size: clamp(1.1rem, 4.5vw, 1.5rem); font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
     .list-item .pinyin-small { font-size: 0.65rem; color: #1565C0; font-weight: 600; margin-bottom: 1px; }
@@ -2562,6 +2564,9 @@
           '<div class="hanzi-small" style="color: ' + theme.text + ';">' + word.hanzi + '</div>' +
           '<div class="pinyin-small">' + word.pinyin + '</div>' +
           '<div class="meaning-small">' + word.meaning + '</div>';
+        itemDiv.onclick = (function(idx, t){
+  return function(){ openModal(idx, t.bg, t.text); };
+})(i, theme);
         container.appendChild(itemDiv);
       }
     }
