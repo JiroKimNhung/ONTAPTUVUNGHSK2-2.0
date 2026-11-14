@@ -1,0 +1,2815 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>Ôn tập từ vựng HSK1</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg-body: #F2F9FF;
+      --text-main: #333;
+      --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+      --font-hanzi: "KaiTi", "STKaiti", "Kaiti SC", "楷体", "BiauKai", "DFKai-SB", serif;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-body); color: var(--text-main);
+      height: 100dvh; overflow: hidden; display: flex; flex-direction: column;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .header { padding: 8px 10px 0; flex-shrink: 0; }
+    .app-title {
+      text-align: center; font-size: clamp(0.95rem, 4.2vw, 1.2rem); font-weight: 800; color: #1565C0;
+      letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 5px;
+      text-shadow: 0 1px 2px rgba(21, 101, 192, 0.15);
+    }
+    .tabs { display: flex; background: #fff; border-radius: 13px; padding: 3px; box-shadow: var(--shadow-sm); gap: 3px; }
+    .tab-btn {
+      flex: 1; border: none; background: transparent; padding: 7px 0; font-size: 0.8rem; font-weight: 600;
+      color: #888; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .tab-btn.active { background: #E3F2FD; color: #1565C0; }
+    .tab-btn .tab-icon { font-size: 0.85rem; }
+    .main-content { flex: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .tab-panel { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+    #panel-flashcard { padding: 6px 8px 8px; justify-content: space-between; }
+    
+    .flashcard-grid {
+      flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, 1fr);
+      gap: 5px; min-height: 0; max-height: 60vh; margin: auto 0;
+    }
+    .flashcard { perspective: 600px; position: relative; min-height: 0; }
+    .flashcard-inner {
+      width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1); cursor: pointer;
+      border-radius: 12px; box-shadow: var(--shadow-sm);
+    }
+    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-inner:active { transform: scale(0.94); }
+    .flashcard.flipped .flashcard-inner:active { transform: rotateY(180deg) scale(0.94); }
+    .flashcard-face {
+      position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 2px; text-align: center; overflow: hidden;
+    }
+    .flashcard-front { border: 1.5px solid transparent; }
+    .flashcard-back { background-color: #ffffff; color: var(--text-main); transform: rotateY(180deg); border: 1.5px solid #eee; }
+    .card-icon { position: absolute; top: 2px; left: 3px; font-size: 11px; line-height: 1; z-index: 2; filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.15)); }
+    
+    .hanzi { font-family: var(--font-hanzi); font-size: clamp(1.2rem, 5.5vw, 1.9rem); font-weight: 700; line-height: 1; letter-spacing: 0.5px; }
+    .pinyin { font-size: clamp(0.85rem, 3.2vw, 1.1rem); font-weight: 700; color: #1565C0; margin-bottom: 1px; line-height: 1.1; }
+    .meaning { font-size: clamp(0.75rem, 2.8vw, 1rem); font-weight: 500; color: #555; line-height: 1.1; }
+    
+    .controls { flex-shrink: 0; padding-top: 6px; display: flex; justify-content: center; }
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 5px; padding: 9px 20px;
+      border-radius: 12px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      transition: all 0.15s ease; box-shadow: var(--shadow-sm); background: #E3F2FD; color: #1565C0;
+      width: 100%; max-width: 260px;
+    }
+    .btn:active { transform: scale(0.94); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    
+    #panel-list { padding: 8px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .list-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-bottom: 16px; }
+    .list-item {
+      background: #fff; border-radius: 14px; padding: 8px; box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+      border: 1.5px solid transparent; position: relative;
+    }
+    .list-item .card-icon { top: 3px; left: 5px; font-size: 12px; }
+    .list-item .hanzi-small { font-family: var(--font-hanzi); font-size: clamp(1.1rem, 4.5vw, 1.5rem); font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
+    .list-item .pinyin-small { font-size: 0.65rem; color: #1565C0; font-weight: 600; margin-bottom: 1px; }
+    .list-item .meaning-small { font-size: 0.65rem; color: #666; line-height: 1.1; }
+    .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 3px; }
+    .list-header h2 { font-size: 0.95rem; color: var(--text-main); }
+    .count-badge { background: #F0E6FA; color: #6A1B9A; padding: 3px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+
+    /* ================= POPUP CSS ================= */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); z-index: 999;
+      display: none; justify-content: center; align-items: center;
+      padding: 16px; opacity: 0; transition: opacity 0.2s ease;
+    }
+    .modal-overlay.show { display: flex; opacity: 1; }
+    
+    .modal-content {
+      background: #fff; width: 100%; max-width: 380px;
+      border-radius: 18px; padding: 20px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center; position: relative;
+      transform: translateY(20px);
+      transition: transform 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
+      max-height: 80vh; overflow-y: auto;
+      border: 2px solid transparent;
+    }
+    .modal-overlay.show .modal-content { transform: translateY(0); }
+    
+    .modal-close {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(255,255,255,0.7); border: none; width: 30px; height: 30px;
+      border-radius: 50%; font-size: 15px; cursor: pointer; color: #555;
+      display: flex; justify-content: center; align-items: center;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .modal-close:active { background: rgba(0,0,0,0.12); }
+    
+    .modal-hanzi { font-family: var(--font-hanzi); font-size: clamp(2.2rem, 9vw, 3.2rem); font-weight: 700; margin-bottom: 6px; }
+    
+    .modal-pinyin-row { 
+      display: flex; justify-content: center; align-items: center; gap: 7px; margin-bottom: 14px; 
+    }
+    .modal-pinyin { font-size: 1.1rem; font-weight: 700; color: #1565C0; }
+    .modal-type { font-style: italic; font-size: 0.9rem; color: #888; font-weight: 500; }
+
+    .speaker-btn {
+      background: rgba(0,0,0,0.05);
+      border: none;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.75;
+      transition: opacity 0.15s, transform 0.15s, background 0.15s;
+    }
+    .speaker-btn:active {
+      opacity: 1;
+      transform: scale(1.15);
+      background: rgba(0,0,0,0.12);
+    }
+    .speaker-btn-sm {
+      width: 22px;
+      height: 22px;
+      font-size: 0.8rem;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+
+    .modal-meaning { font-size: 1rem; font-weight: 500; color: #333; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed rgba(0,0,0,0.15); }
+    
+    .modal-example-title {
+      font-size: 0.8rem; font-weight: 700; color: #888; text-transform: uppercase;
+      margin-bottom: 6px; letter-spacing: 1px;
+      padding-top: 6px; border-top: 1px solid rgba(0,0,0,0.08);
+      display: flex; justify-content: center; align-items: center;
+    }
+    .modal-example {
+      font-size: 1rem; font-family: var(--font-hanzi); line-height: 1.5; color: #444;
+      background: rgba(255,255,255,0.85);
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow:
+        0 2px 0 rgba(0,0,0,0.06),
+        0 6px 14px rgba(0,0,0,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    .modal-example .hl-word { font-weight: 900; color: inherit; padding: 0 1px; }
+
+    /* ================= GAME TAB CSS ================= */
+    #panel-game { padding: 8px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .game-selector { display: flex; gap: 6px; margin-bottom: 10px; }
+    .game-selector .game-tab {
+      flex: 1; padding: 8px 0; border-radius: 11px; border: none; font-weight: 700; font-size: 0.78rem;
+      background: #fff; color: #666; box-shadow: var(--shadow-sm); cursor: pointer; transition: all .2s;
+    }
+    #gt-pikachu.active { background: #FFF9E6; color: #B8860B; border: 1.5px solid #FFE082; }
+    #gt-quiz.active { background: #E0F7FA; color: #00838F; border: 1.5px solid #80DEEA; }
+    #gt-tfs.active { background: #F3E5F5; color: #7B1FA2; border: 1.5px solid #CE93D8; }
+
+    /* --- Màn hình chờ dùng chung --- */
+    .game-idle {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px; padding: 24px 16px; min-height: 420px;
+      text-align: center;
+    }
+    .game-idle-title {
+      font-size: 1.1rem; font-weight: 800; margin-bottom: 14px;
+    }
+    .game-idle-desc {
+      font-size: 0.85rem; line-height: 1.6; max-width: 300px;
+    }
+    .game-idle-desc .tfs-line {
+      display: block;
+      margin-bottom: 6px;
+    }
+    .game-start-btn {
+      border: none; border-radius: 14px;
+      padding: 14px 40px; font-size: 1.05rem; font-weight: 800; letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      cursor: pointer; transition: transform 0.1s;
+      margin-top: 24px;
+      color: #fff;
+    }
+    .game-start-btn:active { transform: scale(0.95); }
+    /* Màu riêng cho từng game */
+    .game-idle.pikachu-idle { background: #FFFDF6; border-radius: 14px; }
+    .game-idle.pikachu-idle .game-idle-title { color: #B8860B; }
+    .game-idle.pikachu-idle .game-idle-desc { color: #8D6E63; }
+    .game-idle.pikachu-idle .game-start-btn { background: #F9A825; }
+
+    .game-idle.quiz-idle { background: #F0FDFF; border-radius: 14px; }
+    .game-idle.quiz-idle .game-idle-title { color: #00838F; }
+    .game-idle.quiz-idle .game-idle-desc { color: #00695C; }
+    .game-idle.quiz-idle .game-start-btn { background: #00838F; }
+
+    /* --- Pikachu --- */
+    .pikachu-wrap { display: none; flex-direction: column; gap: 8px; align-items: center; }
+    .pikachu-wrap.active { display: flex; }
+    .pikachu-info { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #555; font-weight: 600; padding: 0 3px; width: 100%; }
+
+    .pikachu-board-wrap {
+      position: relative;
+      background: #FFFBEF;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      border: 1.5px dashed #FFE082;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      width: fit-content;
+      max-width: 100%;
+    }
+    .pikachu-board {
+      --gap: 4px;
+      --cols: 6;
+      --cell: calc((100vw - 32px - (var(--cols) - 1) * var(--gap)) / var(--cols));
+      display: grid;
+      grid-template-columns: repeat(6, var(--cell));
+      grid-template-rows: repeat(7, var(--cell));
+      gap: var(--gap);
+      padding: 6px;
+      justify-content: center;
+      align-content: center;
+      position: relative; z-index: 2;
+    }
+    .pikachu-cell {
+      width: var(--cell);
+      height: var(--cell);
+      border-radius: 8px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      font-family: var(--font-hanzi);
+      font-weight: 700;
+      text-align: center; line-height: 1;
+      overflow: hidden; position: relative;
+    }
+    .pikachu-cell.pad {
+      background: transparent;
+      border: 1px dashed rgba(255, 224, 130, 0.35);
+      cursor: default;
+      pointer-events: none;
+    }
+    .pikachu-cell.real {
+      background: #FFFDF6; color: #B8860B;
+      cursor: pointer; user-select: none;
+      transition: transform .1s, background .15s, opacity .2s;
+      border: 1.5px solid #FFE082;
+      padding: 1px;
+    }
+    .pikachu-cell.real .pc-hanzi {
+      font-family: var(--font-hanzi);
+      font-size: clamp(0.9rem, 4vw, 1.4rem);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .pikachu-cell.real .pc-pinyin {
+      font-size: clamp(0.45rem, 1.8vw, 0.6rem);
+      font-style: italic;
+      color: #aaa;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .pikachu-cell.real.empty { background: transparent; border-color: transparent; cursor: default; }
+    .pikachu-cell.real.selected { background: #FFE082 !important; border-color: #FFB300 !important; transform: scale(1.08); }
+    .pikachu-cell.real:active:not(.empty) { transform: scale(0.92); }
+
+    .pikachu-line-canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 3;
+    }
+    .pikachu-actions { display: flex; gap: 6px; width: 100%; }
+    .pikachu-actions .btn { max-width: none; flex: 1; padding: 8px 8px; font-size: 0.78rem; background: #FFF3CD; color: #B8860B; }
+    .pikachu-msg { text-align: center; font-size: 0.78rem; font-weight: 600; min-height: 1.1em; color: #C62828; width: 100%; }
+
+    .pikachu-result {
+      display: none; margin-top: 2px; width: 100%;
+      background: #fff; border-radius: 12px; padding: 10px; box-shadow: var(--shadow-sm);
+    }
+    .pikachu-result.show { display: block; }
+    .pikachu-result h3 { font-size: 0.85rem; color: #1565C0; margin-bottom: 6px; text-align: center; }
+    .pikachu-result ol { padding-left: 20px; }
+    .pikachu-result li {
+      font-size: 0.78rem; line-height: 1.45; color: #333; padding: 2px 0;
+      border-bottom: 1px dashed #eee;
+    }
+    .pikachu-result li:last-child { border-bottom: none; }
+    .pikachu-result .r-hanzi { font-family: var(--font-hanzi); font-weight: 700; color: #C2185B; font-size: 0.95rem; }
+    .pikachu-result .r-pinyin { color: #1565C0; font-weight: 600; }
+    .pikachu-result .r-meaning { color: #555; }
+
+    /* --- Quiz --- */
+    .quiz-wrap { display: none; flex-direction: column; }
+    .quiz-wrap.active { display: flex; }
+    .quiz-name-bar {
+      position: sticky; top: 0; z-index: 5; background: #E0F7FA;
+      padding: 6px 6px 8px; display: flex; gap: 6px; align-items: center;
+      border-radius: 0 0 12px 12px;
+    }
+    .quiz-name-bar input {
+      flex: 1; padding: 8px 10px; border-radius: 10px; border: 1.5px solid #80DEEA;
+      font-size: 0.85rem; outline: none; background: #fff; font-weight: 600;
+    }
+    .quiz-name-bar input:focus { border-color: #00838F; }
+    .quiz-name-bar input.error { border-color: #E53935; background: #FFEBEE; }
+    .quiz-name-bar .name-label { font-size: 0.75rem; font-weight: 700; color: #00838F; white-space: nowrap; }
+    .quiz-list { display: flex; flex-direction: column; gap: 8px; padding: 8px 0 10px; }
+    .quiz-q {
+      background: #fff; border-radius: 12px; padding: 10px; box-shadow: var(--shadow-sm);
+      border: 1.5px solid #B2EBF2;
+    }
+    .quiz-q.correct { border-color: #66BB6A; background: #F1F8E9; }
+    .quiz-q.wrong { border-color: #EF5350; background: #FFEBEE; }
+    .quiz-q-title { font-size: 0.8rem; font-weight: 700; color: #333; margin-bottom: 6px; line-height: 1.35; }
+    .quiz-q-title .q-num { color: #00838F; }
+    .quiz-q-title .q-hanzi { font-family: var(--font-hanzi); font-size: 1.05rem; color: #C2185B; }
+    .quiz-q-title .q-pinyin-inline {
+      font-size: 0.72rem;
+      font-style: italic;
+      color: #aaa;
+      font-weight: 600;
+      margin-left: 3px;
+    }
+    .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .quiz-opt {
+      display: flex; align-items: center; gap: 4px; padding: 6px 7px; border-radius: 9px;
+      background: #F0FDFF; border: 1.5px solid #B2EBF2; font-size: 0.75rem; cursor: pointer;
+      transition: all .15s; line-height: 1.2; font-weight: 500; color: #333;
+    }
+    .quiz-opt:active { transform: scale(0.97); }
+    .quiz-opt .opt-key {
+      flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; background: #B2EBF2; color: #00838F;
+      display: flex; justify-content: center; align-items: center; font-size: 0.65rem; font-weight: 800;
+    }
+    .quiz-opt.selected { background: #80DEEA; border-color: #00838F; }
+    .quiz-opt.selected .opt-key { background: #00838F; color: #fff; }
+    .quiz-opt.correct-ans { background: #C8E6C9 !important; border-color: #2E7D32 !important; }
+    .quiz-opt.wrong-ans { background: #FFCDD2 !important; border-color: #C62828 !important; }
+
+    .quiz-footer {
+      position: sticky; bottom: 0; z-index: 5; background: #E0F7FA;
+      padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+      display: flex; flex-direction: column; gap: 6px;
+      border-radius: 12px 12px 0 0;
+    }
+    .quiz-footer .btn { max-width: none; background: #B2EBF2; color: #00838F; }
+    .btn.green { background: #E8F5E9; color: #2E7D32; }
+
+    /* ===== QUIZ RESULT MODAL ===== */
+    .quiz-result-modal { text-align: left; padding: 22px 18px; }
+    .qr-title { text-align: center; font-size: 1.05rem; font-weight: 800; color: #00838F; margin-bottom: 4px; }
+    .qr-name { text-align: center; font-size: 0.85rem; color: #666; margin-bottom: 12px; }
+    .qr-score { text-align: center; font-size: 1.6rem; font-weight: 900; color: #2E7D32; margin-bottom: 14px; }
+    .qr-score small { font-size: 0.9rem; color: #888; font-weight: 600; }
+    .qr-wrong-title {
+      font-size: 0.85rem; font-weight: 800; color: #C62828; margin-bottom: 8px;
+      border-top: 1px dashed #ddd; padding-top: 10px;
+    }
+    .qr-wrong-list { list-style: none; padding: 0; margin: 0 0 12px 0; }
+    .qr-wrong-list li {
+      background: #FFF8E1; border-radius: 10px; padding: 8px 10px; margin-bottom: 6px;
+      font-size: 0.8rem; line-height: 1.45; color: #333;
+      border-left: 3px solid #FFB300;
+    }
+    .qr-wrong-list li .qr-qnum { color: #C62828; font-weight: 800; margin-right: 4px; }
+    .qr-wrong-list li .qr-hanzi { font-family: var(--font-hanzi); font-weight: 700; color: #C2185B; font-size: 0.95rem; }
+    .qr-wrong-list li .qr-pinyin { color: #1565C0; font-weight: 600; }
+    .qr-wrong-list li .qr-meaning { color: #333; font-weight: 600; }
+    .qr-wrong-list li .qr-yours { color: #999; font-style: italic; font-size: 0.75rem; display: block; margin-top: 2px; }
+    .qr-perfect {
+      text-align: center; font-size: 0.9rem; color: #2E7D32; font-weight: 700;
+      background: #E8F5E9; border-radius: 10px; padding: 10px; margin-bottom: 10px;
+    }
+    .qr-actions { display: flex; gap: 8px; margin-top: 6px; }
+    .qr-actions .btn { max-width: none; flex: 1; }
+
+    /* =====================================================================
+       ============ GAME 3: ĐÚNG/SAI NHANH (TÍM – HỒNG NEON) ============
+       ===================================================================== */
+    .tfs-wrap { display: none; flex-direction: column; gap: 10px; }
+    .tfs-wrap.active { display: flex; }
+    .tfs-stage {
+      position: relative;
+      background: linear-gradient(160deg, #F3E5F5, #FCE4EC);
+      border-radius: 16px;
+      padding: 0;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .tfs-idle {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px; padding: 24px 16px; min-height: 420px;
+      text-align: center;
+    }
+    .tfs-idle-title {
+      font-size: 1.1rem; font-weight: 800; color: #7B1FA2;
+      margin-bottom: 14px;
+    }
+    .tfs-idle-desc {
+      font-size: 0.85rem; color: #6A1B9A; line-height: 1.5; max-width: 280px;
+    }
+    .tfs-idle-desc .tfs-line {
+      display: block;
+      margin-bottom: 6px;
+    }
+    .tfs-start-btn {
+      background: #7B1FA2; color: #fff; border: none; border-radius: 14px;
+      padding: 14px 40px; font-size: 1.05rem; font-weight: 800; letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(123,31,162,0.35);
+      cursor: pointer; transition: transform 0.1s;
+      margin-top: 24px;
+    }
+    .tfs-start-btn:active { transform: scale(0.95); }
+    .tfs-play { display: none; flex-direction: column; gap: 10px; padding: 12px 12px 16px; }
+    .tfs-play.show { display: flex; }
+    .tfs-timer-track {
+      width: 100%; height: 8px; border-radius: 6px;
+      background: rgba(255,255,255,0.6);
+      overflow: hidden; margin-bottom: 10px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+    }
+    .tfs-timer-fill {
+      height: 100%; width: 100%;
+      background: linear-gradient(90deg, #FF4081, #FF80AB);
+      border-radius: 6px;
+      transition: width 0.1s linear;
+    }
+    .tfs-timer-fill.warn { background: linear-gradient(90deg, #E53935, #FF8A80); }
+    .tfs-info-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.78rem; font-weight: 700; color: #6A1B9A;
+      margin-bottom: 10px;
+    }
+    .tfs-info-row .tfs-counter { color: #7B1FA2; }
+    .tfs-combo {
+      background: #FFD54F; color: #5D4037;
+      padding: 2px 9px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 800;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      opacity: 0; transform: scale(0.6);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .tfs-combo.show { opacity: 1; transform: scale(1); }
+    .tfs-card {
+      background: #fff;
+      border: 2px solid #BA68C8;
+      border-radius: 16px;
+      padding: 18px 12px 16px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(186,104,200,0.18);
+      margin-bottom: 12px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      min-height: 130px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .tfs-card.flash-wrong { box-shadow: 0 0 0 3px #FFCDD2, 0 4px 14px rgba(229,57,53,0.25); }
+    .tfs-card.flash-timeout { border-color: #FFC107; box-shadow: 0 0 0 3px #FFF3CD; }
+    .tfs-hanzi-row {
+      display: flex; justify-content: center; align-items: baseline; gap: 6px;
+      margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .tfs-hanzi {
+      font-family: var(--font-hanzi);
+      font-size: clamp(2.4rem, 11vw, 3.6rem);
+      font-weight: 700;
+      color: #6A1B9A;
+      line-height: 1.05;
+    }
+    .tfs-pinyin-inline {
+      font-size: clamp(0.85rem, 3.5vw, 1.05rem);
+      font-style: italic;
+      color: #bbb;
+      font-weight: 600;
+    }
+    .tfs-meaning {
+      font-size: clamp(1rem, 4.2vw, 1.2rem);
+      font-weight: 600;
+      color: #4A148C;
+      line-height: 1.3;
+    }
+    .tfs-answer-reveal {
+      margin-top: 8px; font-size: 0.82rem; font-weight: 700;
+      color: #C62828; min-height: 1.1em;
+    }
+    .tfs-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tfs-btn {
+      border: none; border-radius: 14px; padding: 16px 0;
+      font-size: 1.05rem; font-weight: 800; letter-spacing: 0.5px;
+      color: #fff; cursor: pointer;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.12);
+      transition: transform 0.08s, box-shadow 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tfs-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.15); }
+    .tfs-btn:disabled { opacity: 0.5; cursor: default; }
+    .tfs-btn.tfs-true { background: #43A047; }
+    .tfs-btn.tfs-false { background: #E53935; }
+    .tfs-btn.pulse-true { animation: tfsPulseGreen 0.35s; }
+    .tfs-btn.pulse-false { animation: tfsPulseRed 0.35s; }
+    @keyframes tfsPulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(67,160,71,0.7); }
+      100% { box-shadow: 0 0 0 14px rgba(67,160,71,0); }
+    }
+    @keyframes tfsPulseRed {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-2px); }
+      100% { transform: translateX(0); }
+    }
+    .tfs-stop-row { display: flex; justify-content: center; margin-top: 10px; }
+    .tfs-stop-btn {
+      background: rgba(255,255,255,0.85); color: #7B1FA2;
+      border: 1.5px solid #CE93D8; border-radius: 10px;
+      padding: 7px 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    }
+    .tfs-stop-btn:active { background: #F3E5F5; }
+    .tfs-progress-note {
+      text-align: center; font-size: 0.75rem; color: #7B1FA2; font-weight: 600;
+      min-height: 1.1em;
+    }
+
+    /* Pháo hoa */
+    .tfs-fireworks {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1001;
+      overflow: hidden;
+    }
+    .tfs-spark {
+      position: absolute;
+      width: 8px; height: 8px; border-radius: 50%;
+      opacity: 1;
+      will-change: transform, opacity;
+      animation: tfsSparkFly 1.2s ease-out forwards;
+    }
+    @keyframes tfsSparkFly {
+      0% { transform: translate(0,0) scale(1); opacity: 1; }
+      70% { opacity: 0.9; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+    }
+    .tfs-firework-text {
+      position: absolute; left: 50%; top: 45%;
+      transform: translate(-50%,-50%) scale(0.6);
+      font-size: 1.4rem; font-weight: 900; color: #FF4081;
+      text-shadow: 0 2px 6px rgba(255,64,129,0.4);
+      opacity: 0; pointer-events: none;
+      animation: tfsFireText 1.2s ease-out forwards;
+      white-space: nowrap;
+    }
+    @keyframes tfsFireText {
+      0% { opacity: 0; transform: translate(-50%,-50%) scale(0.6); }
+      20% { opacity: 1; transform: translate(-50%,-50%) scale(1.05); }
+      70% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) scale(1.1); }
+    }
+    .tfs-result-modal { text-align: left; padding: 22px 18px; }
+    .tfs-r-title { text-align: center; font-size: 1.1rem; font-weight: 800; color: #7B1FA2; margin-bottom: 6px; }
+    .tfs-r-score {
+      text-align: center; font-size: 1.7rem; font-weight: 900; color: #2E7D32;
+      margin-bottom: 14px;
+    }
+    .tfs-r-score small { font-size: 0.9rem; color: #888; font-weight: 600; }
+    .tfs-r-wrong-title {
+      font-size: 0.85rem; font-weight: 800; color: #C62828; margin-bottom: 8px;
+      border-top: 1px dashed #ddd; padding-top: 10px;
+    }
+    .tfs-r-wrong-list { list-style: none; padding: 0; margin: 0 0 12px 0; }
+    .tfs-r-wrong-list li {
+      background: #F3E5F5; border-radius: 10px; padding: 8px 10px; margin-bottom: 6px;
+      font-size: 0.8rem; line-height: 1.45; color: #333;
+      border-left: 3px solid #BA68C8;
+    }
+    .tfs-r-wrong-list li .tfs-r-qnum { color: #7B1FA2; font-weight: 800; margin-right: 4px; }
+    .tfs-r-wrong-list li .tfs-r-hanzi { font-family: var(--font-hanzi); font-weight: 700; color: #C2185B; font-size: 0.95rem; }
+    .tfs-r-wrong-list li .tfs-r-pinyin { color: #1565C0; font-weight: 600; }
+    .tfs-r-wrong-list li .tfs-r-meaning { color: #333; font-weight: 600; }
+    .tfs-r-perfect {
+      text-align: center; font-size: 0.95rem; color: #2E7D32; font-weight: 700;
+      background: #E8F5E9; border-radius: 10px; padding: 12px; margin-bottom: 10px;
+    }
+    .tfs-r-actions { display: flex; gap: 8px; margin-top: 6px; }
+    .tfs-r-actions .btn { max-width: none; flex: 1; background: #CE93D8; color: #fff; }
+
+    /* ===== ĐỒNG BỘ KÍCH THƯỚC 3 MÀN HÌNH CHỜ ===== */
+    .game-idle,
+    .tfs-idle {
+      width: 100% !important;
+      height: 420px !important;
+      min-height: 420px !important;
+      max-height: 420px !important;
+      padding: 24px 16px !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 10px !important;
+      text-align: center !important;
+      overflow: hidden !important;
+    }
+       .game-idle .game-start-btn,
+    .tfs-idle .tfs-start-btn {
+      margin-top: 24px !important;
+    }
+
+    .modal-example-pinyin {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #888;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .modal-example-meaning {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="app-title">📚 ÔN TẬP TỪ VỰNG HSK1</div>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-flashcard" onclick="switchTab('flashcard')">
+        <span class="tab-icon">🃏</span> Thẻ
+      </button>
+      <button class="tab-btn" id="tab-list" onclick="switchTab('list')">
+        <span class="tab-icon">📋</span> Danh sách
+      </button>
+      <button class="tab-btn" id="tab-game" onclick="switchTab('game')">
+        <span class="tab-icon">🎮</span> Trò chơi
+      </button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="tab-panel active" id="panel-flashcard">
+      <div class="flashcard-grid" id="flashcard-grid"></div>
+      <div class="controls">
+        <button class="btn" onclick="shuffleCards()">🔄 Xáo trộn 10 thẻ</button>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-list">
+      <div class="list-header">
+        <h2>Tất cả từ vựng</h2>
+        <span class="count-badge" id="total-count">0 từ</span>
+      </div>
+      <div class="list-grid" id="list-container"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-game">
+      <div class="game-selector">
+        <button class="game-tab active" id="gt-pikachu" onclick="switchGame('pikachu')">🔗 Nối từ</button>
+        <button class="game-tab" id="gt-quiz" onclick="switchGame('quiz')">📝 Trắc nghiệm</button>
+        <button class="game-tab" id="gt-tfs" onclick="switchGame('tfs')">⚡ Đúng-Sai</button>
+      </div>
+
+      <div class="pikachu-wrap active" id="pikachu-wrap">
+        <div class="game-idle pikachu-idle" id="pikachu-idle">
+          <div class="game-idle-title">🔗 Nối từ Pikachu</div>
+          <div class="game-idle-desc">
+            <span class="tfs-line">Nối 2 chữ Hán thành 1 từ có nghĩa.</span>
+            </div>
+          <button class="game-start-btn" onclick="startPikachu()">Bắt đầu chơi</button>
+        </div>
+
+        <div class="pikachu-play" id="pikachu-play" style="display:none; flex-direction:column; gap:8px; align-items:center; width:100%;">
+          <div class="pikachu-info">
+            <span>Còn lại: <span id="pikachu-remaining">0</span> cặp</span>
+            <span>Điểm: <span id="pikachu-score">0</span></span>
+          </div>
+          <div class="pikachu-board-wrap" id="pikachu-board-wrap">
+            <div class="pikachu-board" id="pikachu-board"></div>
+            <svg class="pikachu-line-canvas" id="pikachu-line-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="pikachu-msg" id="pikachu-msg"></div>
+          <div class="pikachu-actions">
+            <button class="btn" onclick="startPikachu()">🔄 Ván mới</button>
+            <button class="btn" onclick="pikachuHint()">💡 Gợi ý</button>
+          </div>
+          <div class="pikachu-result" id="pikachu-result">
+            <h3>🎉 Hoàn thành! Danh sách 10 từ của ván này:</h3>
+            <ol id="pikachu-result-list"></ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-wrap" id="quiz-wrap">
+        <div class="game-idle quiz-idle" id="quiz-idle">
+          <div class="game-idle-title">📝 Trắc nghiệm</div>
+          <div class="game-idle-desc">
+            <span class="tfs-line">Nhìn chữ Hán, chọn nghĩa tiếng Việt đúng.</span>
+            <span class="tfs-line">Có 10 câu, mỗi câu 4 lựa chọn (A/B/C/D).</span>
+          </div>
+          <button class="game-start-btn" onclick="startQuiz()">Bắt đầu chơi</button>
+        </div>
+
+        <div class="quiz-play" id="quiz-play" style="display:none; flex-direction:column; width:100%;">
+          <div class="quiz-name-bar">
+            <span class="name-label">Tên:</span>
+            <input type="text" id="quiz-name" placeholder="Nhập tên của bạn..." maxlength="40" autocomplete="off">
+          </div>
+          <div class="quiz-list" id="quiz-list"></div>
+          <div class="quiz-footer">
+            <button class="btn" id="quiz-submit-btn" onclick="submitQuiz()">Kiểm tra</button>
+            <button class="btn green" id="quiz-retry-btn" style="display:none;" onclick="startQuiz()">Làm lại (bộ mới)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tfs-wrap" id="tfs-wrap">
+        <div class="tfs-stage" id="tfs-stage">
+          <div class="tfs-idle" id="tfs-idle">
+            <div class="tfs-idle-title">⚡ Đúng / Sai nhanh</div>
+            <div class="tfs-idle-desc">
+              <span class="tfs-line">Nhìn chữ Hán và nghĩa</span>
+              <span class="tfs-line">Chọn ĐÚNG hoặc SAI</span>
+            </div>
+            <button class="tfs-start-btn" onclick="startTFS()">Bắt đầu chơi</button>
+          </div>
+          <div class="tfs-play" id="tfs-play">
+            <div class="tfs-timer-track">
+              <div class="tfs-timer-fill" id="tfs-timer-fill"></div>
+            </div>
+            <div class="tfs-info-row">
+              <span class="tfs-counter">Câu <span id="tfs-current">1</span>/<span id="tfs-total">20</span></span>
+              <span class="tfs-combo" id="tfs-combo">🔥 x0</span>
+            </div>
+            <div class="tfs-card" id="tfs-card">
+              <div class="tfs-hanzi-row">
+                <div class="tfs-hanzi" id="tfs-hanzi">爱</div>
+                <div class="tfs-pinyin-inline" id="tfs-pinyin">ài</div>
+              </div>
+              <div class="tfs-meaning" id="tfs-meaning">yêu</div>
+              <div class="tfs-answer-reveal" id="tfs-reveal"></div>
+            </div>
+            <div class="tfs-buttons">
+              <button class="tfs-btn tfs-true" id="tfs-btn-true" onclick="answerTFS(true)">ĐÚNG</button>
+              <button class="tfs-btn tfs-false" id="tfs-btn-false" onclick="answerTFS(false)">SAI</button>
+            </div>
+            <div class="tfs-progress-note" id="tfs-note"></div>
+            <div class="tfs-stop-row">
+              <button class="tfs-stop-btn" onclick="stopTFS()">Kết thúc</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tfs-fireworks" id="tfs-fireworks"></div>
+
+  <div class="modal-overlay" id="exampleModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-hanzi" id="m-hanzi"></div>
+      <div class="modal-pinyin-row">
+        <div class="modal-pinyin" id="m-pinyin"></div>
+        <button class="speaker-btn" onclick="speakHanzi()" title="Phát âm từ">🔈</button>
+        <div class="modal-type" id="m-type"></div>
+      </div>
+      <div class="modal-meaning" id="m-meaning"></div>
+            <div class="modal-example-title">
+        Ví dụ
+        <button class="speaker-btn speaker-btn-sm" onclick="speakExample()" title="Đọc câu ví dụ">🔈</button>
+      </div>
+      <div class="modal-example" id="m-example"></div>
+      <div class="modal-example-pinyin" id="m-example-pinyin"></div>
+      <div class="modal-example-meaning" id="m-example-meaning"></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="quizResultModal" onclick="closeQuizResult(event)">
+    <div class="modal-content quiz-result-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeQuizResult()">✕</button>
+      <div class="qr-title">Kết quả bài làm</div>
+      <div class="qr-name" id="qr-name"></div>
+      <div class="qr-score" id="qr-score"></div>
+      <div id="qr-wrong-wrap"></div>
+      <div class="qr-actions">
+        <button class="btn green" onclick="closeQuizResult(); startQuiz();">Làm lại (bộ mới)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="tfsResultModal" onclick="closeTFSResult(event)">
+    <div class="modal-content tfs-result-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeTFSResult()">✕</button>
+      <div class="tfs-r-title">Kết quả</div>
+      <div class="tfs-r-score" id="tfs-r-score"></div>
+      <div id="tfs-r-wrong-wrap"></div>
+      <div class="tfs-r-actions">
+        <button class="btn" onclick="closeTFSResult(); startTFS();">Chơi lại</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // 👇 DÁN TỪ VỰNG VÀO ĐÂY 👇 (10 từ tượng trưng)
+    // =====================================================================
+    var vocabulary = [
+        { hanzi: "爱", pinyin: "ài", type: "Động từ", meaning: "yêu",
+  example: "我爱我的妈妈。",
+  examplePinyin: "Wǒ ài wǒ de māma.",
+  exampleMeaning: "Tôi yêu mẹ tôi." },
+{ hanzi: "八", pinyin: "bā", type: "Số từ", meaning: "tám",
+  example: "我有八本书。",
+  examplePinyin: "Wǒ yǒu bā běn shū.",
+  exampleMeaning: "Tôi có tám quyển sách." },
+{ hanzi: "爸爸", pinyin: "bàba", type: "Danh từ", meaning: "bố, cha",
+  example: "我爸爸是医生。",
+  examplePinyin: "Wǒ bàba shì yīshēng.",
+  exampleMeaning: "Bố tôi là bác sĩ." },
+{ hanzi: "杯子", pinyin: "bēizi", type: "Danh từ", meaning: "cái cốc",
+  example: "这个杯子很漂亮。",
+  examplePinyin: "Zhège bēizi hěn piàoliang.",
+  exampleMeaning: "Cái cốc này rất đẹp." },
+{ hanzi: "本", pinyin: "běn", type: "Lượng từ", meaning: "quyển",
+  example: "我买了两本书。",
+  examplePinyin: "Wǒ mǎi le liǎng běn shū.",
+  exampleMeaning: "Tôi đã mua hai quyển sách." },
+{ hanzi: "不", pinyin: "bù", type: "Phó từ", meaning: "không",
+  example: "我不喝茶。",
+  examplePinyin: "Wǒ bù hē chá.",
+  exampleMeaning: "Tôi không uống trà." },
+{ hanzi: "不客气", pinyin: "bú kèqi", type: "Cụm từ", meaning: "đừng khách sáo",
+  example: "谢谢你！不客气。",
+  examplePinyin: "Xièxie nǐ! Bú kèqi.",
+  exampleMeaning: "Cảm ơn bạn! Không có gì." },
+{ hanzi: "菜", pinyin: "cài", type: "Danh từ", meaning: "món ăn",
+  example: "这个菜很好吃。",
+  examplePinyin: "Zhège cài hěn hǎochī.",
+  exampleMeaning: "Món ăn này rất ngon." },
+{ hanzi: "茶", pinyin: "chá", type: "Danh từ", meaning: "trà",
+  example: "请喝茶。",
+  examplePinyin: "Qǐng hē chá.",
+  exampleMeaning: "Mời uống trà." },
+{ hanzi: "吃", pinyin: "chī", type: "Động từ", meaning: "ăn",
+  example: "我想吃米饭。",
+  examplePinyin: "Wǒ xiǎng chī mǐfàn.",
+  exampleMeaning: "Tôi muốn ăn cơm." },
+{ hanzi: "出租车", pinyin: "chūzùchē", type: "Danh từ", meaning: "taxi",
+  example: "我们坐出租车去。",
+  examplePinyin: "Wǒmen zuò chūzùchē qù.",
+  exampleMeaning: "Chúng ta đi taxi." },
+{ hanzi: "打电话", pinyin: "dǎ diànhuà", type: "Động từ", meaning: "gọi điện thoại",
+  example: "我给妈妈打电话。",
+  examplePinyin: "Wǒ gěi māma dǎ diànhuà.",
+  exampleMeaning: "Tôi gọi điện cho mẹ." },
+{ hanzi: "大", pinyin: "dà", type: "Tính từ", meaning: "to, lớn",
+  example: "这个苹果很大。",
+  examplePinyin: "Zhège píngguǒ hěn dà.",
+  exampleMeaning: "Quả táo này rất to." },
+{ hanzi: "的", pinyin: "de", type: "Trợ từ", meaning: "của",
+  example: "这是我的书。",
+  examplePinyin: "Zhè shì wǒ de shū.",
+  exampleMeaning: "Đây là sách của tôi." },
+{ hanzi: "点", pinyin: "diǎn", type: "Lượng từ", meaning: "giờ",
+  example: "现在几点？",
+  examplePinyin: "Xiànzài jǐ diǎn?",
+  exampleMeaning: "Bây giờ là mấy giờ?" },
+{ hanzi: "电脑", pinyin: "diànnǎo", type: "Danh từ", meaning: "máy tính",
+  example: "我用电脑工作。",
+  examplePinyin: "Wǒ yòng diànnǎo gōngzuò.",
+  exampleMeaning: "Tôi dùng máy tính làm việc." },
+{ hanzi: "电视", pinyin: "diànshì", type: "Danh từ", meaning: "tivi",
+  example: "爸爸在看电视。",
+  examplePinyin: "Bàba zài kàn diànshì.",
+  exampleMeaning: "Bố đang xem tivi." },
+{ hanzi: "电影", pinyin: "diànyǐng", type: "Danh từ", meaning: "phim",
+  example: "我想看电影。",
+  examplePinyin: "Wǒ xiǎng kàn diànyǐng.",
+  exampleMeaning: "Tôi muốn xem phim." },
+{ hanzi: "东西", pinyin: "dōngxi", type: "Danh từ", meaning: "đồ vật",
+  example: "我去买东西。",
+  examplePinyin: "Wǒ qù mǎi dōngxi.",
+  exampleMeaning: "Tôi đi mua đồ." },
+{ hanzi: "都", pinyin: "dōu", type: "Phó từ", meaning: "đều",
+  example: "我们都是学生。",
+  examplePinyin: "Wǒmen dōu shì xuéshēng.",
+  exampleMeaning: "Chúng tôi đều là học sinh." },
+{ hanzi: "读", pinyin: "dú", type: "Động từ", meaning: "đọc",
+  example: "请读这个字。",
+  examplePinyin: "Qǐng dú zhège zì.",
+  exampleMeaning: "Xin hãy đọc chữ này." },
+{ hanzi: "对不起", pinyin: "duìbuqǐ", type: "Cụm từ", meaning: "xin lỗi",
+  example: "对不起，我来晚了。",
+  examplePinyin: "Duìbuqǐ, wǒ lái wǎn le.",
+  exampleMeaning: "Xin lỗi, tôi đến muộn." },
+{ hanzi: "多", pinyin: "duō", type: "Tính từ", meaning: "nhiều",
+  example: "这里人很多。",
+  examplePinyin: "Zhèlǐ rén hěn duō.",
+  exampleMeaning: "Ở đây có rất nhiều người." },
+{ hanzi: "多少", pinyin: "duōshao", type: "Đại từ", meaning: "bao nhiêu",
+  example: "这个多少钱？",
+  examplePinyin: "Zhège duōshao qián?",
+  exampleMeaning: "Cái này bao nhiêu tiền?" },
+{ hanzi: "儿子", pinyin: "érzi", type: "Danh từ", meaning: "con trai",
+  example: "他有一个儿子。",
+  examplePinyin: "Tā yǒu yí gè érzi.",
+  exampleMeaning: "Anh ấy có một cậu con trai." },
+{ hanzi: "二", pinyin: "èr", type: "Số từ", meaning: "hai",
+  example: "我有二个苹果。",
+  examplePinyin: "Wǒ yǒu èr gè píngguǒ.",
+  exampleMeaning: "Tôi có hai quả táo." },
+{ hanzi: "饭店", pinyin: "fàndiàn", type: "Danh từ", meaning: "nhà hàng",
+  example: "我们去饭店吃饭。",
+  examplePinyin: "Wǒmen qù fàndiàn chīfàn.",
+  exampleMeaning: "Chúng ta đi nhà hàng ăn cơm." },
+{ hanzi: "飞机", pinyin: "fēijī", type: "Danh từ", meaning: "máy bay",
+  example: "我坐飞机去北京。",
+  examplePinyin: "Wǒ zuò fēijī qù Běijīng.",
+  exampleMeaning: "Tôi đi máy bay đến Bắc Kinh." },
+{ hanzi: "分钟", pinyin: "fēnzhōng", type: "Danh từ", meaning: "phút",
+  example: "请等我五分钟。",
+  examplePinyin: "Qǐng děng wǒ wǔ fēnzhōng.",
+  exampleMeaning: "Xin đợi tôi năm phút." },
+{ hanzi: "高兴", pinyin: "gāoxìng", type: "Tính từ", meaning: "vui",
+  example: "认识你很高兴。",
+  examplePinyin: "Rènshi nǐ hěn gāoxìng.",
+  exampleMeaning: "Rất vui được biết bạn." },
+{ hanzi: "个", pinyin: "gè", type: "Lượng từ", meaning: "cái",
+  example: "我有一个问题。",
+  examplePinyin: "Wǒ yǒu yí gè wèntí.",
+  exampleMeaning: "Tôi có một câu hỏi." },
+{ hanzi: "工作", pinyin: "gōngzuò", type: "Danh từ", meaning: "công việc",
+  example: "我的工作很忙。",
+  examplePinyin: "Wǒ de gōngzuò hěn máng.",
+  exampleMeaning: "Công việc của tôi rất bận." },
+{ hanzi: "狗", pinyin: "gǒu", type: "Danh từ", meaning: "con chó",
+  example: "我家有一只小狗。",
+  examplePinyin: "Wǒ jiā yǒu yì zhī xiǎo gǒu.",
+  exampleMeaning: "Nhà tôi có một con chó nhỏ." },
+{ hanzi: "汉语", pinyin: "Hànyǔ", type: "Danh từ", meaning: "tiếng Trung",
+  example: "我学汉语。",
+  examplePinyin: "Wǒ xué Hànyǔ.",
+  exampleMeaning: "Tôi học tiếng Trung." },
+{ hanzi: "好", pinyin: "hǎo", type: "Tính từ", meaning: "tốt",
+  example: "今天天气很好。",
+  examplePinyin: "Jīntiān tiānqì hěn hǎo.",
+  exampleMeaning: "Thời tiết hôm nay rất tốt." },
+{ hanzi: "号", pinyin: "hào", type: "Danh từ", meaning: "ngày, số",
+  example: "今天几号？",
+  examplePinyin: "Jīntiān jǐ hào?",
+  exampleMeaning: "Hôm nay là ngày mấy?" },
+{ hanzi: "喝", pinyin: "hē", type: "Động từ", meaning: "uống",
+  example: "我想喝水。",
+  examplePinyin: "Wǒ xiǎng hē shuǐ.",
+  exampleMeaning: "Tôi muốn uống nước." },
+{ hanzi: "和", pinyin: "hé", type: "Liên từ", meaning: "và",
+  example: "我和朋友一起走。",
+  examplePinyin: "Wǒ hé péngyou yìqǐ zǒu.",
+  exampleMeaning: "Tôi và bạn cùng đi." },
+{ hanzi: "很", pinyin: "hěn", type: "Phó từ", meaning: "rất",
+  example: "我很好。",
+  examplePinyin: "Wǒ hěn hǎo.",
+  exampleMeaning: "Tôi rất khỏe." },
+{ hanzi: "后面", pinyin: "hòumiàn", type: "Danh từ", meaning: "phía sau",
+  example: "学校在后面。",
+  examplePinyin: "Xuéxiào zài hòumiàn.",
+  exampleMeaning: "Trường học ở phía sau." },
+{ hanzi: "回", pinyin: "huí", type: "Động từ", meaning: "về",
+  example: "我要回家。",
+  examplePinyin: "Wǒ yào huí jiā.",
+  exampleMeaning: "Tôi muốn về nhà." },
+{ hanzi: "会", pinyin: "huì", type: "Động từ", meaning: "biết",
+  example: "我会说汉语。",
+  examplePinyin: "Wǒ huì shuō Hànyǔ.",
+  exampleMeaning: "Tôi biết nói tiếng Trung." },
+{ hanzi: "几", pinyin: "jǐ", type: "Đại từ", meaning: "mấy",
+  example: "你家有几个人？",
+  examplePinyin: "Nǐ jiā yǒu jǐ gè rén?",
+  exampleMeaning: "Nhà bạn có mấy người?" },
+{ hanzi: "家", pinyin: "jiā", type: "Danh từ", meaning: "nhà",
+  example: "我在家。",
+  examplePinyin: "Wǒ zài jiā.",
+  exampleMeaning: "Tôi ở nhà." },
+{ hanzi: "叫", pinyin: "jiào", type: "Động từ", meaning: "tên là",
+  example: "我叫小明。",
+  examplePinyin: "Wǒ jiào Xiǎomíng.",
+  exampleMeaning: "Tôi tên là Tiểu Minh." },
+{ hanzi: "今天", pinyin: "jīntiān", type: "Danh từ", meaning: "hôm nay",
+  example: "今天我很忙。",
+  examplePinyin: "Jīntiān wǒ hěn máng.",
+  exampleMeaning: "Hôm nay tôi rất bận." },
+{ hanzi: "九", pinyin: "jiǔ", type: "Số từ", meaning: "chín",
+  example: "现在九点。",
+  examplePinyin: "Xiànzài jiǔ diǎn.",
+  exampleMeaning: "Bây giờ là chín giờ." },
+{ hanzi: "开", pinyin: "kāi", type: "Động từ", meaning: "mở",
+  example: "请开门。",
+  examplePinyin: "Qǐng kāi mén.",
+  exampleMeaning: "Xin mở cửa." },
+{ hanzi: "看", pinyin: "kàn", type: "Động từ", meaning: "xem, đọc",
+  example: "我看书。",
+  examplePinyin: "Wǒ kàn shū.",
+  exampleMeaning: "Tôi đọc sách." },
+{ hanzi: "看见", pinyin: "kànjiàn", type: "Động từ", meaning: "nhìn thấy",
+  example: "我看见他了。",
+  examplePinyin: "Wǒ kànjiàn tā le.",
+  exampleMeaning: "Tôi đã nhìn thấy anh ấy." },
+{ hanzi: "块", pinyin: "kuài", type: "Lượng từ", meaning: "đồng (tiền)",
+  example: "这个苹果五块钱。",
+  examplePinyin: "Zhège píngguǒ wǔ kuài qián.",
+  exampleMeaning: "Quả táo này năm đồng." },
+{ hanzi: "来", pinyin: "lái", type: "Động từ", meaning: "đến",
+  example: "请来我家。",
+  examplePinyin: "Qǐng lái wǒ jiā.",
+  exampleMeaning: "Xin hãy đến nhà tôi." },
+{ hanzi: "老师", pinyin: "lǎoshī", type: "Danh từ", meaning: "giáo viên",
+  example: "王老师很好。",
+  examplePinyin: "Wáng lǎoshī hěn hǎo.",
+  exampleMeaning: "Cô giáo Vương rất tốt." },
+{ hanzi: "了", pinyin: "le", type: "Trợ từ", meaning: "rồi",
+  example: "我吃饭了。",
+  examplePinyin: "Wǒ chīfàn le.",
+  exampleMeaning: "Tôi ăn cơm rồi." },
+{ hanzi: "冷", pinyin: "lěng", type: "Tính từ", meaning: "lạnh",
+  example: "今天很冷。",
+  examplePinyin: "Jīntiān hěn lěng.",
+  exampleMeaning: "Hôm nay rất lạnh." },
+{ hanzi: "里", pinyin: "lǐ", type: "Danh từ", meaning: "trong",
+  example: "书在包里。",
+  examplePinyin: "Shū zài bāo lǐ.",
+  exampleMeaning: "Sách ở trong cặp." },
+{ hanzi: "六", pinyin: "liù", type: "Số từ", meaning: "sáu",
+  example: "我有六本书。",
+  examplePinyin: "Wǒ yǒu liù běn shū.",
+  exampleMeaning: "Tôi có sáu quyển sách." },
+{ hanzi: "妈妈", pinyin: "māma", type: "Danh từ", meaning: "mẹ",
+  example: "妈妈做饭。",
+  examplePinyin: "Māma zuòfàn.",
+  exampleMeaning: "Mẹ nấu cơm." },
+{ hanzi: "吗", pinyin: "ma", type: "Trợ từ", meaning: "...không?",
+  example: "你好吗？",
+  examplePinyin: "Nǐ hǎo ma?",
+  exampleMeaning: "Bạn khỏe không?" },
+{ hanzi: "买", pinyin: "mǎi", type: "Động từ", meaning: "mua",
+  example: "我买水果。",
+  examplePinyin: "Wǒ mǎi shuǐguǒ.",
+  exampleMeaning: "Tôi mua trái cây." },
+{ hanzi: "猫", pinyin: "māo", type: "Danh từ", meaning: "mèo",
+  example: "我喜欢小猫。",
+  examplePinyin: "Wǒ xǐhuan xiǎo māo.",
+  exampleMeaning: "Tôi thích mèo con." },
+{ hanzi: "没关系", pinyin: "méi guānxi", type: "Cụm từ", meaning: "không sao",
+  example: "没关系，我不生气。",
+  examplePinyin: "Méi guānxi, wǒ bù shēngqì.",
+  exampleMeaning: "Không sao, tôi không giận." },
+{ hanzi: "没有", pinyin: "méiyǒu", type: "Phó từ", meaning: "không có",
+  example: "我没有钱。",
+  examplePinyin: "Wǒ méiyǒu qián.",
+  exampleMeaning: "Tôi không có tiền." },
+{ hanzi: "米饭", pinyin: "mǐfàn", type: "Danh từ", meaning: "cơm",
+  example: "我想吃米饭。",
+  examplePinyin: "Wǒ xiǎng chī mǐfàn.",
+  exampleMeaning: "Tôi muốn ăn cơm." },
+{ hanzi: "名字", pinyin: "míngzi", type: "Danh từ", meaning: "tên",
+  example: "你的名字是什么？",
+  examplePinyin: "Nǐ de míngzi shì shénme?",
+  exampleMeaning: "Tên của bạn là gì?" },
+{ hanzi: "明天", pinyin: "míngtiān", type: "Danh từ", meaning: "ngày mai",
+  example: "明天见。",
+  examplePinyin: "Míngtiān jiàn.",
+  exampleMeaning: "Ngày mai gặp." },
+{ hanzi: "哪", pinyin: "nǎ", type: "Đại từ", meaning: "nào",
+  example: "你是哪国人？",
+  examplePinyin: "Nǐ shì nǎ guó rén?",
+  exampleMeaning: "Bạn là người nước nào?" },
+{ hanzi: "哪儿", pinyin: "nǎr", type: "Đại từ", meaning: "ở đâu",
+  example: "你去哪儿？",
+  examplePinyin: "Nǐ qù nǎr?",
+  exampleMeaning: "Bạn đi đâu?" },
+{ hanzi: "那", pinyin: "nà", type: "Đại từ", meaning: "kia, đó",
+  example: "那是我的书。",
+  examplePinyin: "Nà shì wǒ de shū.",
+  exampleMeaning: "Đó là sách của tôi." },
+{ hanzi: "呢", pinyin: "ne", type: "Trợ từ", meaning: "thì sao?",
+  example: "我很好，你呢？",
+  examplePinyin: "Wǒ hěn hǎo, nǐ ne?",
+  exampleMeaning: "Tôi rất khỏe, còn bạn thì sao?" },
+{ hanzi: "能", pinyin: "néng", type: "Động từ", meaning: "có thể",
+  example: "我能进来吗？",
+  examplePinyin: "Wǒ néng jìn lái ma?",
+  exampleMeaning: "Tôi có thể vào không?" },
+{ hanzi: "你", pinyin: "nǐ", type: "Đại từ", meaning: "bạn",
+  example: "你是学生吗？",
+  examplePinyin: "Nǐ shì xuéshēng ma?",
+  exampleMeaning: "Bạn là học sinh à?" },
+{ hanzi: "年", pinyin: "nián", type: "Danh từ", meaning: "năm",
+  example: "一年有十二个月。",
+  examplePinyin: "Yì nián yǒu shí'èr gè yuè.",
+  exampleMeaning: "Một năm có mười hai tháng." },
+{ hanzi: "女儿", pinyin: "nǚ'ér", type: "Danh từ", meaning: "con gái",
+  example: "她有一个女儿。",
+  examplePinyin: "Tā yǒu yí gè nǚ'ér.",
+  exampleMeaning: "Cô ấy có một cô con gái." },
+{ hanzi: "朋友", pinyin: "péngyou", type: "Danh từ", meaning: "bạn",
+  example: "他是我的朋友。",
+  examplePinyin: "Tā shì wǒ de péngyou.",
+  exampleMeaning: "Anh ấy là bạn của tôi." },
+{ hanzi: "漂亮", pinyin: "piàoliang", type: "Tính từ", meaning: "đẹp",
+  example: "她很漂亮。",
+  examplePinyin: "Tā hěn piàoliang.",
+  exampleMeaning: "Cô ấy rất đẹp." },
+{ hanzi: "苹果", pinyin: "píngguǒ", type: "Danh từ", meaning: "táo",
+  example: "我吃苹果。",
+  examplePinyin: "Wǒ chī píngguǒ.",
+  exampleMeaning: "Tôi ăn táo." },
+{ hanzi: "七", pinyin: "qī", type: "Số từ", meaning: "bảy",
+  example: "现在七点。",
+  examplePinyin: "Xiànzài qī diǎn.",
+  exampleMeaning: "Bây giờ là bảy giờ." },
+{ hanzi: "前面", pinyin: "qiánmiàn", type: "Danh từ", meaning: "phía trước",
+  example: "商店在前面。",
+  examplePinyin: "Shāngdiàn zài qiánmiàn.",
+  exampleMeaning: "Cửa hàng ở phía trước." },
+{ hanzi: "前", pinyin: "qián", type: "Danh từ", meaning: "trước",
+  example: "三天前我去了北京。",
+  examplePinyin: "Sān tiān qián wǒ qù le Běijīng.",
+  exampleMeaning: "Ba ngày trước tôi đã đi Bắc Kinh." },
+{ hanzi: "请", pinyin: "qǐng", type: "Động từ", meaning: "mời",
+  example: "请坐。",
+  examplePinyin: "Qǐng zuò.",
+  exampleMeaning: "Mời ngồi." },
+{ hanzi: "去", pinyin: "qù", type: "Động từ", meaning: "đi",
+  example: "我去学校。",
+  examplePinyin: "Wǒ qù xuéxiào.",
+  exampleMeaning: "Tôi đi đến trường." },
+{ hanzi: "热", pinyin: "rè", type: "Tính từ", meaning: "nóng",
+  example: "今天很热。",
+  examplePinyin: "Jīntiān hěn rè.",
+  exampleMeaning: "Hôm nay rất nóng." },
+{ hanzi: "人", pinyin: "rén", type: "Danh từ", meaning: "người",
+  example: "他是中国人。",
+  examplePinyin: "Tā shì Zhōngguó rén.",
+  exampleMeaning: "Anh ấy là người Trung Quốc." },
+{ hanzi: "认识", pinyin: "rènshi", type: "Động từ", meaning: "quen biết",
+  example: "我认识他。",
+  examplePinyin: "Wǒ rènshi tā.",
+  exampleMeaning: "Tôi quen anh ấy." },
+{ hanzi: "三", pinyin: "sān", type: "Số từ", meaning: "ba",
+  example: "我有三个朋友。",
+  examplePinyin: "Wǒ yǒu sān gè péngyou.",
+  exampleMeaning: "Tôi có ba người bạn." },
+{ hanzi: "商店", pinyin: "shāngdiàn", type: "Danh từ", meaning: "cửa hàng",
+  example: "我去商店买衣服。",
+  examplePinyin: "Wǒ qù shāngdiàn mǎi yīfu.",
+  exampleMeaning: "Tôi đi cửa hàng mua quần áo." },
+{ hanzi: "上", pinyin: "shàng", type: "Danh từ", meaning: "trên",
+  example: "书在桌子上。",
+  examplePinyin: "Shū zài zhuōzi shàng.",
+  exampleMeaning: "Sách ở trên bàn." },
+{ hanzi: "上午", pinyin: "shàngwǔ", type: "Danh từ", meaning: "buổi sáng",
+  example: "上午我有课。",
+  examplePinyin: "Shàngwǔ wǒ yǒu kè.",
+  exampleMeaning: "Buổi sáng tôi có tiết học." },
+{ hanzi: "少", pinyin: "shǎo", type: "Tính từ", meaning: "ít",
+  example: "这里人很少。",
+  examplePinyin: "Zhèlǐ rén hěn shǎo.",
+  exampleMeaning: "Ở đây có rất ít người." },
+{ hanzi: "谁", pinyin: "shéi", type: "Đại từ", meaning: "ai",
+  example: "他是谁？",
+  examplePinyin: "Tā shì shéi?",
+  exampleMeaning: "Anh ấy là ai?" },
+{ hanzi: "什么", pinyin: "shénme", type: "Đại từ", meaning: "cái gì",
+  example: "这是什么？",
+  examplePinyin: "Zhè shì shénme?",
+  exampleMeaning: "Đây là cái gì?" },
+{ hanzi: "十", pinyin: "shí", type: "Số từ", meaning: "mười",
+  example: "我有十块钱。",
+  examplePinyin: "Wǒ yǒu shí kuài qián.",
+  exampleMeaning: "Tôi có mười đồng." },
+{ hanzi: "时候", pinyin: "shíhou", type: "Danh từ", meaning: "lúc",
+  example: "你什么时候来？",
+  examplePinyin: "Nǐ shénme shíhou lái?",
+  exampleMeaning: "Bạn đến lúc nào?" },
+{ hanzi: "是", pinyin: "shì", type: "Động từ", meaning: "là",
+  example: "我是学生。",
+  examplePinyin: "Wǒ shì xuéshēng.",
+  exampleMeaning: "Tôi là học sinh." },
+{ hanzi: "书", pinyin: "shū", type: "Danh từ", meaning: "sách",
+  example: "这是汉语书。",
+  examplePinyin: "Zhè shì Hànyǔ shū.",
+  exampleMeaning: "Đây là sách tiếng Trung." },
+{ hanzi: "水", pinyin: "shuǐ", type: "Danh từ", meaning: "nước",
+  example: "我要喝水。",
+  examplePinyin: "Wǒ yào hē shuǐ.",
+  exampleMeaning: "Tôi muốn uống nước." },
+{ hanzi: "水果", pinyin: "shuǐguǒ", type: "Danh từ", meaning: "trái cây",
+  example: "我喜欢吃水果。",
+  examplePinyin: "Wǒ xǐhuan chī shuǐguǒ.",
+  exampleMeaning: "Tôi thích ăn trái cây." },
+{ hanzi: "睡觉", pinyin: "shuìjiào", type: "Động từ", meaning: "ngủ",
+  example: "我想睡觉。",
+  examplePinyin: "Wǒ xiǎng shuìjiào.",
+  exampleMeaning: "Tôi muốn ngủ." },
+{ hanzi: "说", pinyin: "shuō", type: "Động từ", meaning: "nói",
+  example: "请说汉语。",
+  examplePinyin: "Qǐng shuō Hànyǔ.",
+  exampleMeaning: "Xin nói tiếng Trung." },
+{ hanzi: "四", pinyin: "sì", type: "Số từ", meaning: "bốn",
+  example: "我家有四个人。",
+  examplePinyin: "Wǒ jiā yǒu sì gè rén.",
+  exampleMeaning: "Nhà tôi có bốn người." },
+{ hanzi: "岁", pinyin: "suì", type: "Lượng từ", meaning: "tuổi",
+  example: "我今年二十岁。",
+  examplePinyin: "Wǒ jīnnián èrshí suì.",
+  exampleMeaning: "Năm nay tôi hai mươi tuổi." },
+{ hanzi: "他", pinyin: "tā", type: "Đại từ", meaning: "anh ấy",
+  example: "他是我的老师。",
+  examplePinyin: "Tā shì wǒ de lǎoshī.",
+  exampleMeaning: "Ông ấy là giáo viên của tôi." },
+{ hanzi: "她", pinyin: "tā", type: "Đại từ", meaning: "cô ấy",
+  example: "她是我的同学。",
+  examplePinyin: "Tā shì wǒ de tóngxué.",
+  exampleMeaning: "Cô ấy là bạn học của tôi." },
+{ hanzi: "太", pinyin: "tài", type: "Phó từ", meaning: "quá",
+  example: "太好了！",
+  examplePinyin: "Tài hǎo le!",
+  exampleMeaning: "Tốt quá!" },
+{ hanzi: "天气", pinyin: "tiānqì", type: "Danh từ", meaning: "thời tiết",
+  example: "今天天气很好。",
+  examplePinyin: "Jīntiān tiānqì hěn hǎo.",
+  exampleMeaning: "Thời tiết hôm nay rất đẹp." },
+{ hanzi: "听", pinyin: "tīng", type: "Động từ", meaning: "nghe",
+  example: "我听音乐。",
+  examplePinyin: "Wǒ tīng yīnyuè.",
+  exampleMeaning: "Tôi nghe nhạc." },
+{ hanzi: "同学", pinyin: "tóngxué", type: "Danh từ", meaning: "bạn học",
+  example: "他是我的同学。",
+  examplePinyin: "Tā shì wǒ de tóngxué.",
+  exampleMeaning: "Cậu ấy là bạn học của tôi." },
+{ hanzi: "喂", pinyin: "wèi", type: "Thán từ", meaning: "a lô",
+  example: "喂，你好！",
+  examplePinyin: "Wèi, nǐ hǎo!",
+  exampleMeaning: "A lô, xin chào!" },
+{ hanzi: "我", pinyin: "wǒ", type: "Đại từ", meaning: "tôi",
+  example: "我是越南人。",
+  examplePinyin: "Wǒ shì Yuènán rén.",
+  exampleMeaning: "Tôi là người Việt Nam." },
+{ hanzi: "我们", pinyin: "wǒmen", type: "Đại từ", meaning: "chúng tôi",
+  example: "我们是朋友。",
+  examplePinyin: "Wǒmen shì péngyou.",
+  exampleMeaning: "Chúng tôi là bạn." },
+{ hanzi: "五", pinyin: "wǔ", type: "Số từ", meaning: "năm",
+  example: "我有五本书。",
+  examplePinyin: "Wǒ yǒu wǔ běn shū.",
+  exampleMeaning: "Tôi có năm quyển sách." },
+{ hanzi: "喜欢", pinyin: "xǐhuan", type: "Động từ", meaning: "thích",
+  example: "我喜欢喝茶。",
+  examplePinyin: "Wǒ xǐhuan hē chá.",
+  exampleMeaning: "Tôi thích uống trà." },
+{ hanzi: "下", pinyin: "xià", type: "Động từ", meaning: "rơi",
+  example: "下雨了。",
+  examplePinyin: "Xià yǔ le.",
+  exampleMeaning: "Trời mưa rồi." },
+{ hanzi: "下午", pinyin: "xiàwǔ", type: "Danh từ", meaning: "buổi chiều",
+  example: "下午我去商店。",
+  examplePinyin: "Xiàwǔ wǒ qù shāngdiàn.",
+  exampleMeaning: "Buổi chiều tôi đi cửa hàng." },
+{ hanzi: "下雨", pinyin: "xià yǔ", type: "Động từ", meaning: "có mưa",
+  example: "今天下雨，很冷。",
+  examplePinyin: "Jīntiān xià yǔ, hěn lěng.",
+  exampleMeaning: "Hôm nay mưa, rất lạnh." },
+{ hanzi: "先生", pinyin: "xiānsheng", type: "Danh từ", meaning: "ông, ngài",
+  example: "王先生在吗？",
+  examplePinyin: "Wáng xiānsheng zài ma?",
+  exampleMeaning: "Ông Vương có ở đây không?" },
+{ hanzi: "现在", pinyin: "xiànzài", type: "Danh từ", meaning: "bây giờ",
+  example: "现在几点了？",
+  examplePinyin: "Xiànzài jǐ diǎn le?",
+  exampleMeaning: "Bây giờ là mấy giờ rồi?" },
+{ hanzi: "想", pinyin: "xiǎng", type: "Động từ", meaning: "muốn",
+  example: "我想回家。",
+  examplePinyin: "Wǒ xiǎng huí jiā.",
+  exampleMeaning: "Tôi muốn về nhà." },
+{ hanzi: "小", pinyin: "xiǎo", type: "Tính từ", meaning: "nhỏ",
+  example: "这个杯子很小。",
+  examplePinyin: "Zhège bēizi hěn xiǎo.",
+  exampleMeaning: "Cái cốc này rất nhỏ." },
+{ hanzi: "小姐", pinyin: "xiǎojiě", type: "Danh từ", meaning: "cô",
+  example: "王小姐在吗？",
+  examplePinyin: "Wáng xiǎojiě zài ma?",
+  exampleMeaning: "Cô Vương có ở đây không?" },
+{ hanzi: "些", pinyin: "xiē", type: "Lượng từ", meaning: "một ít",
+  example: "我买了一些苹果。",
+  examplePinyin: "Wǒ mǎi le yìxiē píngguǒ.",
+  exampleMeaning: "Tôi đã mua một ít táo." },
+{ hanzi: "写", pinyin: "xiě", type: "Động từ", meaning: "viết",
+  example: "我写字。",
+  examplePinyin: "Wǒ xiě zì.",
+  exampleMeaning: "Tôi viết chữ." },
+{ hanzi: "谢谢", pinyin: "xièxie", type: "Động từ", meaning: "cảm ơn",
+  example: "谢谢你的帮助。",
+  examplePinyin: "Xièxie nǐ de bāngzhù.",
+  exampleMeaning: "Cảm ơn sự giúp đỡ của bạn." },
+{ hanzi: "星期", pinyin: "xīngqī", type: "Danh từ", meaning: "tuần",
+  example: "今天星期几？",
+  examplePinyin: "Jīntiān xīngqī jǐ?",
+  exampleMeaning: "Hôm nay là thứ mấy?" },
+{ hanzi: "学生", pinyin: "xuésheng", type: "Danh từ", meaning: "học sinh",
+  example: "他是大学生。",
+  examplePinyin: "Tā shì dàxuéshēng.",
+  exampleMeaning: "Anh ấy là sinh viên đại học." },
+{ hanzi: "学习", pinyin: "xuéxí", type: "Động từ", meaning: "học tập",
+  example: "我学习汉语。",
+  examplePinyin: "Wǒ xuéxí Hànyǔ.",
+  exampleMeaning: "Tôi học tiếng Trung." },
+{ hanzi: "学校", pinyin: "xuéxiào", type: "Danh từ", meaning: "trường học",
+  example: "我去学校。",
+  examplePinyin: "Wǒ qù xuéxiào.",
+  exampleMeaning: "Tôi đi đến trường." },
+{ hanzi: "一", pinyin: "yī", type: "Số từ", meaning: "một",
+  example: "我有一个哥哥。",
+  examplePinyin: "Wǒ yǒu yí gè gēge.",
+  exampleMeaning: "Tôi có một người anh trai." },
+{ hanzi: "衣服", pinyin: "yīfu", type: "Danh từ", meaning: "quần áo",
+  example: "这件衣服很好看。",
+  examplePinyin: "Zhè jiàn yīfu hěn hǎokàn.",
+  exampleMeaning: "Bộ quần áo này rất đẹp." },
+{ hanzi: "医生", pinyin: "yīshēng", type: "Danh từ", meaning: "bác sĩ",
+  example: "我想当医生。",
+  examplePinyin: "Wǒ xiǎng dāng yīshēng.",
+  exampleMeaning: "Tôi muốn làm bác sĩ." },
+{ hanzi: "医院", pinyin: "yīyuàn", type: "Danh từ", meaning: "bệnh viện",
+  example: "他在医院工作。",
+  examplePinyin: "Tā zài yīyuàn gōngzuò.",
+  exampleMeaning: "Anh ấy làm việc ở bệnh viện." },
+{ hanzi: "椅子", pinyin: "yǐzi", type: "Danh từ", meaning: "ghế dựa",
+  example: "这把椅子。",
+  examplePinyin: "Zhè bǎ yǐzi.",
+  exampleMeaning: "Chiếc ghế này." },
+{ hanzi: "一点儿", pinyin: "yìdiǎnr", type: "Lượng từ", meaning: "một chút",
+  example: "我会说一点儿汉语。",
+  examplePinyin: "Wǒ huì shuō yìdiǎnr Hànyǔ.",
+  exampleMeaning: "Tôi biết nói một chút tiếng Trung." },
+{ hanzi: "有", pinyin: "yǒu", type: "Động từ", meaning: "có",
+  example: "我有一只猫。",
+  examplePinyin: "Wǒ yǒu yì zhī māo.",
+  exampleMeaning: "Tôi có một con mèo." },
+{ hanzi: "月", pinyin: "yuè", type: "Danh từ", meaning: "tháng",
+  example: "这个月我很忙。",
+  examplePinyin: "Zhège yuè wǒ hěn máng.",
+  exampleMeaning: "Tháng này tôi rất bận." },
+{ hanzi: "再见", pinyin: "zàijiàn", type: "Động từ", meaning: "tạm biệt",
+  example: "老师再见！",
+  examplePinyin: "Lǎoshī zàijiàn!",
+  exampleMeaning: "Chào tạm biệt thầy/cô!" },
+{ hanzi: "在", pinyin: "zài", type: "Động từ", meaning: "ở",
+  example: "我在家。",
+  examplePinyin: "Wǒ zài jiā.",
+  exampleMeaning: "Tôi ở nhà." },
+{ hanzi: "怎么", pinyin: "zěnme", type: "Đại từ", meaning: "thế nào",
+  example: "怎么去北京？",
+  examplePinyin: "Zěnme qù Běijīng?",
+  exampleMeaning: "Đi Bắc Kinh bằng cách nào?" },
+{ hanzi: "怎么样", pinyin: "zěnmeyàng", type: "Đại từ", meaning: "như thế nào",
+  example: "今天天气怎么样？",
+  examplePinyin: "Jīntiān tiānqì zěnmeyàng?",
+  exampleMeaning: "Thời tiết hôm nay thế nào?" },
+{ hanzi: "这", pinyin: "zhè", type: "Đại từ", meaning: "này",
+  example: "这是我的书。",
+  examplePinyin: "Zhè shì wǒ de shū.",
+  exampleMeaning: "Đây là sách của tôi." },
+{ hanzi: "中午", pinyin: "zhōngwǔ", type: "Danh từ", meaning: "buổi trưa",
+  example: "中午我吃米饭。",
+  examplePinyin: "Zhōngwǔ wǒ chī mǐfàn.",
+  exampleMeaning: "Buổi trưa tôi ăn cơm." },
+{ hanzi: "住", pinyin: "zhù", type: "Động từ", meaning: "sống",
+  example: "我住在北京。",
+  examplePinyin: "Wǒ zhù zài Běijīng.",
+  exampleMeaning: "Tôi sống ở Bắc Kinh." },
+{ hanzi: "桌子", pinyin: "zhuōzi", type: "Danh từ", meaning: "cái bàn",
+  example: "书在桌子上。",
+  examplePinyin: "Shū zài zhuōzi shàng.",
+  exampleMeaning: "Sách ở trên bàn." },
+{ hanzi: "字", pinyin: "zì", type: "Danh từ", meaning: "chữ",
+  example: "这个字怎么读？",
+  examplePinyin: "Zhège zì zěnme dú?",
+  exampleMeaning: "Chữ này đọc như thế nào?" },
+{ hanzi: "昨天", pinyin: "zuótiān", type: "Danh từ", meaning: "hôm qua",
+  example: "昨天我去商店了。",
+  examplePinyin: "Zuótiān wǒ qù shāngdiàn le.",
+  exampleMeaning: "Hôm qua tôi đã đi cửa hàng." },
+{ hanzi: "坐", pinyin: "zuò", type: "Động từ", meaning: "ngồi",
+  example: "请坐。",
+  examplePinyin: "Qǐng zuò.",
+  exampleMeaning: "Mời ngồi." },
+{ hanzi: "做", pinyin: "zuò", type: "Động từ", meaning: "làm",
+  example: "你在做什么？",
+  examplePinyin: "Nǐ zài zuò shénme?",
+  exampleMeaning: "Bạn đang làm gì?" },
+{ hanzi: "上", pinyin: "shàng", type: "Động từ", meaning: "lên",
+  example: "我上楼。",
+  examplePinyin: "Wǒ shàng lóu.",
+  exampleMeaning: "Tôi lên lầu." },
+{ hanzi: "下", pinyin: "xià", type: "Danh từ", meaning: "dưới",
+  example: "猫在桌子下。",
+  examplePinyin: "Māo zài zhuōzi xià.",
+  exampleMeaning: "Con mèo ở dưới bàn." }
+    ];
+
+    // =====================================================================
+    // ⛔ CODE BÊN DƯỚI KHÔNG CẦN CHỈNH SỬA ⛔
+    // =====================================================================
+    var themes = [
+      { bg: "#FFE4EC", text: "#C2185B", icon: "🎀" },
+      { bg: "#FFF9C4", text: "#B8860B", icon: "⭐" },
+      { bg: "#E3F7E3", text: "#2E7D32", icon: "🍀" },
+      { bg: "#E3F2FD", text: "#1565C0", icon: "☁️" },
+      { bg: "#F0E6FA", text: "#6A1B9A", icon: "💜" },
+      { bg: "#FFE6E0", text: "#C62828", icon: "🔥" },
+      { bg: "#EFEBE9", text: "#5D4037", icon: "🐻" },
+      { bg: "#FFE0B2", text: "#E65100", icon: "🍊" },
+      { bg: "#E0F7FA", text: "#00838F", icon: "💎" },
+      { bg: "#ECEFF1", text: "#455A64", icon: "🌙" }
+    ];
+
+    var currentIndices = [];
+    var activeCardElement = null;
+    var currentModalWord = null;
+
+    // Tách pinyin của cả từ thành pinyin riêng cho từng ký tự Hán
+    function splitPinyinByChars(hanzi, pinyin) {
+      var chars = String(hanzi).split('');
+      var py = String(pinyin || '').trim();
+      var n = chars.length;
+      if (n === 0) return [];
+      if (n === 1) return [py];
+
+      // 1) Nếu có khoảng trắng và khớp số ký tự -> tách luôn
+      var spaceParts = py.split(/\s+/).filter(Boolean);
+      if (spaceParts.length === n) return spaceParts;
+
+      if (spaceParts.length > 1 && spaceParts.length < n) {
+        var r = spaceParts.slice(0, n - 1);
+        r.push(spaceParts.slice(n - 1).join(' '));
+        return r;
+      }
+
+      // 2) Không khoảng trắng: tách theo âm tiết pinyin
+      var vowels = 'aAeEiIoOuUüÜāáǎàĀÁǍÀēéěèĒÉĚÈīíǐìĪÍǏÌōóǒòŌÓǑÒūúǔùŪÚǓÙǖǘǚǜǕǗǙǛ';
+      function isVowel(ch) { return vowels.indexOf(ch) !== -1; }
+
+      var syllables = [];
+      var i = 0;
+      var L = py.length;
+      while (i < L) {
+        while (i < L && !/[a-zA-ZüÜāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/.test(py[i])) i++;
+        if (i >= L) break;
+
+        var start = i;
+        var seenVowel = false;
+        while (i < L) {
+          var ch = py[i];
+          if (!/[a-zA-ZüÜāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/.test(ch)) break;
+
+          if (isVowel(ch)) {
+            seenVowel = true;
+          } else if (seenVowel) {
+            var nextIdx = i + 1;
+            while (nextIdx < L && !/[a-zA-ZüÜāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/.test(py[nextIdx])) nextIdx++;
+
+            var chLower = ch.toLowerCase();
+            if (chLower === 'n' || chLower === 'g' || chLower === 'r') {
+              if (nextIdx < L && isVowel(py[nextIdx])) {
+                break;
+              }
+              i++;
+              continue;
+            } else {
+              break;
+            }
+          }
+          i++;
+        }
+
+        var syll = py.substring(start, i);
+        if (syll) syllables.push(syll);
+      }
+
+      if (syllables.length === n) return syllables;
+
+      if (syllables.length > n) {
+        var r2 = syllables.slice(0, n - 1);
+        r2.push(syllables.slice(n - 1).join(''));
+        return r2;
+      }
+      var out = syllables.slice();
+      while (out.length < n) out.push('');
+      return out.slice(0, n);
+    }
+
+    var zhVoice = null;
+
+    function loadVoices() {
+      if (!window.speechSynthesis) return;
+      var voices = window.speechSynthesis.getVoices() || [];
+      zhVoice = voices.find(function (v) { return /^zh[-_]CN/i.test(v.lang); })
+             || voices.find(function (v) { return /^zh/i.test(v.lang); })
+             || null;
+    }
+    if (window.speechSynthesis) {
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function speakText(text) {
+      if (!window.speechSynthesis) {
+        alert('Trình duyệt này không hỗ trợ đọc giọng nói. Hãy mở bằng Chrome hoặc Safari.');
+        return;
+      }
+      loadVoices();
+      if (!zhVoice) {
+        alert('Máy chưa có giọng tiếng Trung. Hãy cài gói giọng nói tiếng Trung trong Cài đặt.');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      setTimeout(function () {
+        var u = new SpeechSynthesisUtterance(text);
+        u.voice = zhVoice;
+        u.lang = zhVoice.lang;
+        u.rate = 0.85;
+        u.volume = 1;
+        window.speechSynthesis.speak(u);
+      }, 80);
+    }
+
+    function speakHanzi() {
+      if (!currentModalWord) return;
+      speakText(currentModalWord.hanzi);
+    }
+
+    function speakExample() {
+      if (!currentModalWord || !currentModalWord.example) return;
+      speakText(currentModalWord.example.replace(/～/g, currentModalWord.hanzi));
+    }
+
+    function shuffleArray(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+      }
+      return arr;
+    }
+
+    function resetAllGamesIdle() {
+      resetPikachuIdle();
+      resetQuizIdle();
+      resetTFSIdle();
+    }
+
+    function switchTab(tabName) {
+      var btns = document.querySelectorAll('.tab-btn');
+      for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+      document.getElementById('tab-' + tabName).classList.add('active');
+      var panels = document.querySelectorAll('.tab-panel');
+      for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+      document.getElementById('panel-' + tabName).classList.add('active');
+      if (tabName !== 'game') {
+        resetAllGamesIdle();
+      }
+    }
+
+    function handleCardClick(element, index) {
+      var parentCard = element.parentElement;
+      if (!parentCard.classList.contains('flipped')) {
+        parentCard.classList.add('flipped');
+      } else {
+        activeCardElement = parentCard;
+        var bg = element.getAttribute('data-bg');
+        var text = element.getAttribute('data-text');
+        openModal(index, bg, text);
+      }
+    }
+
+    function shuffleCards(isInitial) {
+      if (isInitial === undefined) isInitial = false;
+      if (vocabulary.length === 0) return;
+      var availablePool = [];
+      for (var i = 0; i < vocabulary.length; i++) availablePool.push(i);
+      if (!isInitial && currentIndices.length > 0) {
+        availablePool = availablePool.filter(function(idx) {
+          return currentIndices.indexOf(idx) === -1;
+        });
+      }
+      var count = Math.min(10, availablePool.length);
+      availablePool = shuffleArray(availablePool);
+      currentIndices = availablePool.slice(0, count);
+      var themeIndices = [0,1,2,3,4,5,6,7,8,9];
+      shuffleArray(themeIndices);
+      renderFlashcards(currentIndices, themeIndices);
+    }
+
+    function renderFlashcards(indices, themeIndices) {
+      var grid = document.getElementById('flashcard-grid');
+      grid.innerHTML = ''; 
+      for (var pos = 0; pos < indices.length; pos++) {
+        var wordIdx = indices[pos];
+        var word = vocabulary[wordIdx];
+        var theme = themes[themeIndices[pos % 10]];
+        var cardDiv = document.createElement('div');
+        cardDiv.className = 'flashcard';
+        cardDiv.innerHTML = 
+          '<div class="flashcard-inner" ' +
+            'data-bg="' + theme.bg + '" data-text="' + theme.text + '" ' +
+            'onclick="handleCardClick(this, ' + wordIdx + ')">' +
+            '<div class="flashcard-face flashcard-front" style="background-color: ' + theme.bg + '; color: ' + theme.text + ';">' +
+              '<div class="card-icon">' + theme.icon + '</div>' +
+              '<div class="hanzi" style="color: ' + theme.text + ';">' + word.hanzi + '</div>' +
+            '</div>' +
+            '<div class="flashcard-face flashcard-back">' +
+              '<div class="card-icon" style="opacity: 0.5;">' + theme.icon + '</div>' +
+              '<div class="pinyin" style="color: ' + theme.text + ';">' + word.pinyin + '</div>' +
+              '<div class="meaning">' + word.meaning + '</div>' +
+            '</div>' +
+          '</div>';
+        grid.appendChild(cardDiv);
+      }
+    }
+
+    function openModal(wordIndex, themeBg, themeText) {
+      var word = vocabulary[wordIndex];
+      currentModalWord = word;
+      var fallback = themes[wordIndex % themes.length];
+      var bg = themeBg || fallback.bg;
+      var text = themeText || fallback.text;
+
+      document.getElementById('m-hanzi').textContent = word.hanzi;
+      document.getElementById('m-pinyin').textContent = word.pinyin;
+      document.getElementById('m-type').textContent = word.type ? "(" + word.type + ")" : "";
+      document.getElementById('m-meaning').textContent = word.meaning;
+
+      var lightBg = mixWithWhite(bg, 0.85);
+      var lightBorder = mixWithWhite(text, 0.7);
+      var modalContent = document.querySelector('#exampleModal .modal-content');
+      modalContent.style.backgroundColor = lightBg;
+      modalContent.style.borderColor = lightBorder;
+      document.getElementById('m-hanzi').style.color = text;
+      document.getElementById('m-pinyin').style.color = text;
+
+      var exampleEl = document.getElementById('m-example');
+      var exampleText = word.example ? word.example : "Chưa có ví dụ cho từ này.";
+      exampleEl.innerHTML = highlightWord(exampleText, word.hanzi);
+
+      document.getElementById('m-example-pinyin').textContent = word.examplePinyin || '';
+      document.getElementById('m-example-meaning').textContent = word.exampleMeaning || '';
+
+      document.getElementById('exampleModal').classList.add('show');
+    }
+
+    function mixWithWhite(hex, ratio) {
+      hex = hex.replace('#', '');
+      if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+      var r = parseInt(hex.substr(0,2), 16);
+      var g = parseInt(hex.substr(2,2), 16);
+      var b = parseInt(hex.substr(4,2), 16);
+      r = Math.round(r + (255 - r) * ratio);
+      g = Math.round(g + (255 - g) * ratio);
+      b = Math.round(b + (255 - b) * ratio);
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+
+    function highlightWord(text, word) {
+      if (!word) return text;
+      var safe = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return text.replace(new RegExp(safe, 'g'), '<span class="hl-word">' + word + '</span>');
+    }
+
+    function closeModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('exampleModal').classList.remove('show');
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      if (activeCardElement) {
+        activeCardElement.classList.remove('flipped');
+        activeCardElement = null;
+      }
+    }
+
+    function renderList() {
+      var container = document.getElementById('list-container');
+      document.getElementById('total-count').textContent = vocabulary.length + ' từ';
+      container.innerHTML = '';
+      for (var i = 0; i < vocabulary.length; i++) {
+        var word = vocabulary[i];
+        var theme = themes[i % themes.length];
+        var itemDiv = document.createElement('div');
+        itemDiv.className = 'list-item';
+        itemDiv.style.borderColor = theme.bg;
+        itemDiv.innerHTML =
+          '<div class="card-icon">' + theme.icon + '</div>' +
+          '<div class="hanzi-small" style="color: ' + theme.text + ';">' + word.hanzi + '</div>' +
+          '<div class="pinyin-small">' + word.pinyin + '</div>' +
+          '<div class="meaning-small">' + word.meaning + '</div>';
+        container.appendChild(itemDiv);
+      }
+    }
+
+    function getUniqueVocab() {
+      var seen = {}, out = [];
+      for (var i = 0; i < vocabulary.length; i++) {
+        var w = vocabulary[i];
+        if (!seen[w.hanzi]) { seen[w.hanzi] = 1; out.push(w); }
+      }
+      return out;
+    }
+
+    function normMeaning(s) {
+      return String(s || '').toLowerCase().replace(/[.;:!?()\[\]{}"'“”‘’]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    function meaningTokens(s) {
+      return normMeaning(s).split(/[,;\/]+/).map(function(t){ return t.trim(); }).filter(Boolean);
+    }
+    function meaningsOverlap(a, b) {
+      var ta = meaningTokens(a), tb = meaningTokens(b);
+      for (var i = 0; i < ta.length; i++) {
+        for (var j = 0; j < tb.length; j++) {
+          if (ta[i] === tb[j]) return true;
+          if (ta[i].indexOf(tb[j]) !== -1 || tb[j].indexOf(ta[i]) !== -1) return true;
+        }
+      }
+      return false;
+    }
+
+    function pickDistinctForPikachu(pool, need) {
+      var noDupMeaning = [];
+      for (var i = 0; i < pool.length; i++) {
+        var ok = true;
+        for (var j = 0; j < noDupMeaning.length; j++) {
+          if (meaningsOverlap(pool[i].meaning, noDupMeaning[j].meaning)) { ok = false; break; }
+        }
+        if (ok) noDupMeaning.push(pool[i]);
+      }
+      shuffleArray(noDupMeaning);
+      var chosen = [], usedFirstChars = {}, usedHanzi = {};
+      for (var k = 0; k < noDupMeaning.length && chosen.length < need; k++) {
+        var w = noDupMeaning[k];
+        if (usedHanzi[w.hanzi]) continue;
+        var first = w.hanzi.charAt(0);
+        if (usedFirstChars[first]) continue;
+        chosen.push(w); usedHanzi[w.hanzi] = 1; usedFirstChars[first] = 1;
+      }
+      if (chosen.length < need) {
+        for (var m = 0; m < noDupMeaning.length && chosen.length < need; m++) {
+          var w2 = noDupMeaning[m];
+          if (usedHanzi[w2.hanzi]) continue;
+          chosen.push(w2); usedHanzi[w2.hanzi] = 1;
+        }
+      }
+      return chosen;
+    }
+
+    function switchGame(game) {
+      document.getElementById('gt-pikachu').classList.toggle('active', game === 'pikachu');
+      document.getElementById('gt-quiz').classList.toggle('active', game === 'quiz');
+      document.getElementById('gt-tfs').classList.toggle('active', game === 'tfs');
+      document.getElementById('pikachu-wrap').classList.toggle('active', game === 'pikachu');
+      document.getElementById('quiz-wrap').classList.toggle('active', game === 'quiz');
+      document.getElementById('tfs-wrap').classList.toggle('active', game === 'tfs');
+      if (game === 'pikachu') resetPikachuIdle();
+      if (game === 'quiz') resetQuizIdle();
+      if (game === 'tfs') resetTFSIdle();
+    }
+
+    // --------------------- PIKACHU ---------------------
+    var PAD_COLS = 6;
+    var PAD_ROWS = 7;
+    var PLAY_COLS = 4;
+    var PLAY_ROWS = 5;
+
+    var pikachuState = {
+      cells: [],
+      selected: -1,
+      score: 0,
+      pairsLeft: 0,
+      locked: false,
+      wordList: [],
+      running: false
+    };
+
+    function padToPlay(r, c) {
+      if (r < 1 || r > PLAY_ROWS || c < 1 || c > PLAY_COLS) return -1;
+      return (r - 1) * PLAY_COLS + (c - 1);
+    }
+    function playToPad(idx) {
+      var pr = Math.floor(idx / PLAY_COLS);
+      var pc = idx % PLAY_COLS;
+      return { r: pr + 1, c: pc + 1 };
+    }
+
+    function resetPikachuIdle() {
+      pikachuState.running = false;
+      pikachuState.cells = [];
+      pikachuState.selected = -1;
+      pikachuState.locked = true;
+      document.getElementById('pikachu-idle').style.display = 'flex';
+      document.getElementById('pikachu-play').style.display = 'none';
+      document.getElementById('pikachu-result').classList.remove('show');
+      document.getElementById('pikachu-msg').textContent = "";
+      clearPikachuLines();
+    }
+
+    function startPikachu() {
+      pikachuState.running = true;
+      document.getElementById('pikachu-idle').style.display = 'none';
+      document.getElementById('pikachu-play').style.display = 'flex';
+      newPikachu();
+    }
+
+    function hasAnySolvablePair() {
+      var cs = pikachuState.cells;
+      for (var i = 0; i < cs.length; i++) {
+        if (cs[i].empty || cs[i].matched) continue;
+        for (var j = i + 1; j < cs.length; j++) {
+          if (cs[j].empty || cs[j].matched) continue;
+          if (cs[i].wordIdx !== cs[j].wordIdx) continue;
+          if (cs[i].charIdx === cs[j].charIdx) continue;
+          if (canConnectPikachu(i, j)) return true;
+        }
+      }
+      return false;
+    }
+
+    function countRemainingPairs() {
+      var count = 0;
+      for (var i = 0; i < pikachuState.cells.length; i++) {
+        if (!pikachuState.cells[i].empty && !pikachuState.cells[i].matched) count++;
+      }
+      return count / 2;
+    }
+
+    function newPikachu() {
+      var vocab = getUniqueVocab();
+      var twoChar = vocab.filter(function(w){ return w.hanzi.length === 2; });
+      var pool = twoChar.length >= 4 ? twoChar.slice() : vocab.slice();
+
+      if (pool.length < 4) {
+        document.getElementById('pikachu-msg').textContent = "Cần ít nhất 4 từ vựng để chơi.";
+        return;
+      }
+
+      var chosen = pickDistinctForPikachu(pool, 10);
+      if (chosen.length < 10) {
+        document.getElementById('pikachu-msg').textContent =
+          "Chỉ có " + chosen.length + " từ phân biệt, sẽ chơi với " + chosen.length + " cặp.";
+      }
+      pikachuState.wordList = chosen.slice();
+
+      var baseCells = [];
+      for (var i = 0; i < pikachuState.wordList.length; i++) {
+        var w = pikachuState.wordList[i];
+        var chars = w.hanzi.split('');
+        var pyParts = splitPinyinByChars(w.hanzi, w.pinyin);
+        var c0 = chars[0];
+        var c1 = chars.length > 1 ? chars[1] : chars[0];
+        var p0 = pyParts[0] || '';
+        var p1 = pyParts.length > 1 ? pyParts[1] : p0;
+        baseCells.push({ type: 'hanzi', text: c0, pinyin: p0, wordIdx: i, charIdx: 0, matched: false, empty: false });
+        baseCells.push({ type: 'hanzi', text: c1, pinyin: p1, wordIdx: i, charIdx: 1, matched: false, empty: false });
+      }
+      if (baseCells.length > 20) baseCells = baseCells.slice(0, 20);
+
+      var attempts = 0;
+      while (attempts < 500) {
+        shuffleArray(baseCells);
+        pikachuState.cells = baseCells.slice();
+        pikachuState.selected = -1;
+        if (hasAnySolvablePair()) break;
+        attempts++;
+      }
+
+      pikachuState.score = 0;
+      pikachuState.pairsLeft = countRemainingPairs();
+      pikachuState.locked = false;
+
+      document.getElementById('pikachu-result').classList.remove('show');
+      document.getElementById('pikachu-result-list').innerHTML = '';
+      clearPikachuLines();
+      renderPikachu();
+    }
+
+    function clearPikachuLines() {
+      var svg = document.getElementById('pikachu-line-svg');
+      if (svg) svg.innerHTML = '';
+    }
+
+    function renderPikachu() {
+      var board = document.getElementById('pikachu-board');
+      board.innerHTML = '';
+      for (var r = 0; r < PAD_ROWS; r++) {
+        for (var c = 0; c < PAD_COLS; c++) {
+          var playIdx = padToPlay(r, c);
+          var cellDiv = document.createElement('div');
+          if (playIdx === -1) {
+            cellDiv.className = 'pikachu-cell pad';
+          } else {
+            var cell = pikachuState.cells[playIdx];
+            cellDiv.className = 'pikachu-cell real';
+            if (!cell || cell.empty || cell.matched) {
+              cellDiv.classList.add('empty');
+            } else {
+              cellDiv.innerHTML =
+                '<span class="pc-hanzi">' + cell.text + '</span>' +
+                '<span class="pc-pinyin">' + cell.pinyin + '</span>';
+              if (playIdx === pikachuState.selected) cellDiv.classList.add('selected');
+              cellDiv.setAttribute('data-idx', playIdx);
+              cellDiv.onclick = (function(idx){ return function(){ onPikachuClick(idx); }; })(playIdx);
+            }
+          }
+          board.appendChild(cellDiv);
+        }
+      }
+      document.getElementById('pikachu-score').textContent = pikachuState.score;
+      document.getElementById('pikachu-remaining').textContent = pikachuState.pairsLeft;
+    }
+
+    function getPadCenterInWrap(r, c) {
+      var board = document.getElementById('pikachu-board');
+      var wrap = document.getElementById('pikachu-board-wrap');
+      var cells = board.children;
+      var gridIdx = r * PAD_COLS + c;
+      var el = cells[gridIdx];
+      if (!el) return null;
+      var wrapRect = wrap.getBoundingClientRect();
+      var rect = el.getBoundingClientRect();
+      return {
+        x: rect.left - wrapRect.left + rect.width / 2,
+        y: rect.top - wrapRect.top + rect.height / 2
+      };
+    }
+
+    function drawPikachuLine(i1, i2) {
+      var svg = document.getElementById('pikachu-line-svg');
+      var wrap = document.getElementById('pikachu-board-wrap');
+      if (!svg || !wrap) return;
+      var w = wrap.clientWidth;
+      var h = wrap.clientHeight;
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.setAttribute('width', w);
+      svg.setAttribute('height', h);
+      svg.innerHTML = '';
+
+      var path = findConnectPath(i1, i2);
+      if (!path || path.length < 2) return;
+
+      var pts = [];
+      for (var k = 0; k < path.length; k++) {
+        var p = path[k];
+        var pt = getPadCenterInWrap(p.r, p.c);
+        if (pt) pts.push(pt);
+      }
+      if (pts.length < 2) return;
+
+      var simplified = [pts[0]];
+      for (var p2 = 1; p2 < pts.length - 1; p2++) {
+        var prev = simplified[simplified.length - 1];
+        var cur = pts[p2];
+        var next = pts[p2 + 1];
+        var sameX = Math.abs(prev.x - cur.x) < 0.5 && Math.abs(cur.x - next.x) < 0.5;
+        var sameY = Math.abs(prev.y - cur.y) < 0.5 && Math.abs(cur.y - next.y) < 0.5;
+        if (!(sameX || sameY)) simplified.push(cur);
+      }
+      simplified.push(pts[pts.length - 1]);
+
+      var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      poly.setAttribute('points', simplified.map(function(p){ return p.x + ',' + p.y; }).join(' '));
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', '#FF9800');
+      poly.setAttribute('stroke-width', '3');
+      poly.setAttribute('stroke-linecap', 'round');
+      poly.setAttribute('stroke-linejoin', 'round');
+      svg.appendChild(poly);
+
+      setTimeout(function(){
+        poly.style.transition = 'opacity 0.4s';
+        poly.style.opacity = '0';
+        setTimeout(function(){
+          if (poly.parentNode) poly.parentNode.removeChild(poly);
+        }, 420);
+      }, 140);
+    }
+
+    function findConnectPath(i1, i2) {
+      var s = playToPad(i1);
+      var t = playToPad(i2);
+
+      function isOpen(r, c) {
+        if (r < 0 || r >= PAD_ROWS || c < 0 || c >= PAD_COLS) return false;
+        var playIdx = padToPlay(r, c);
+        if (playIdx === -1) return true;
+        if (playIdx === i1 || playIdx === i2) return true;
+        var cell = pikachuState.cells[playIdx];
+        return cell && (cell.empty || cell.matched);
+      }
+
+      var start = { r: s.r, c: s.c, dir: -1, turns: 0, prev: null };
+      var queue = [start];
+      var visited = {};
+      visited[s.r + ',' + s.c + '|-1|0'] = true;
+      var dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+      var goal = null;
+
+      while (queue.length) {
+        var cur = queue.shift();
+        if (cur.r === t.r && cur.c === t.c && !(cur.r === s.r && cur.c === s.c)) {
+          goal = cur; break;
+        }
+        for (var d = 0; d < 4; d++) {
+          var nr = cur.r + dirs[d][0];
+          var nc = cur.c + dirs[d][1];
+          if (!isOpen(nr, nc)) continue;
+          var newTurns = cur.turns + (cur.dir === -1 || cur.dir === d ? 0 : 1);
+          if (newTurns > 3) continue;
+          var vkey = nr + ',' + nc + '|' + d + '|' + newTurns;
+          if (visited[vkey]) continue;
+          visited[vkey] = true;
+          queue.push({ r: nr, c: nc, dir: d, turns: newTurns, prev: cur });
+        }
+      }
+
+      if (!goal) return null;
+
+      var rev = [];
+      var node = goal;
+      while (node) {
+        rev.push({ r: node.r, c: node.c });
+        node = node.prev;
+      }
+      rev.reverse();
+      return rev;
+    }
+
+    function canConnectPikachu(i1, i2) {
+      return findConnectPath(i1, i2) !== null;
+    }
+
+    function onPikachuClick(idx) {
+      if (pikachuState.locked || !pikachuState.running) return;
+      var c = pikachuState.cells[idx];
+      if (!c || c.empty || c.matched) return;
+
+      if (pikachuState.selected === -1) {
+        pikachuState.selected = idx;
+        renderPikachu();
+        return;
+      }
+      if (pikachuState.selected === idx) {
+        pikachuState.selected = -1;
+        renderPikachu();
+        return;
+      }
+
+      var a = pikachuState.cells[pikachuState.selected];
+      var b = c;
+      var isValidPair = (a.wordIdx === b.wordIdx) && (a.charIdx !== b.charIdx);
+      var canConnect = isValidPair && canConnectPikachu(pikachuState.selected, idx);
+
+      if (canConnect) {
+        pikachuState.locked = true;
+        drawPikachuLine(pikachuState.selected, idx);
+
+        setTimeout(function(){
+          a.matched = true; b.matched = true;
+          a.empty = true; b.empty = true;
+          pikachuState.selected = -1;
+          pikachuState.score += 10;
+          pikachuState.pairsLeft = countRemainingPairs();
+          document.getElementById('pikachu-msg').textContent = "";
+          renderPikachu();
+          pikachuState.locked = false;
+
+          if (pikachuState.pairsLeft === 0) {
+            showPikachuResult();
+          } else if (!hasAnySolvablePair()) {
+            shuffleRemaining();
+          }
+        }, 500);
+      } else {
+        var board = document.getElementById('pikachu-board');
+        var pA = playToPad(pikachuState.selected);
+        var pB = playToPad(idx);
+        var elA = board.children[pA.r * PAD_COLS + pA.c];
+        var elB = board.children[pB.r * PAD_COLS + pB.c];
+        if (elA) elA.style.background = '#FFCDD2';
+        if (elB) elB.style.background = '#FFCDD2';
+        document.getElementById('pikachu-msg').textContent = isValidPair ? "Đường nối quá dài (>3 đoạn)." : "Không phải 2 chữ của cùng 1 từ.";
+        setTimeout(function(){
+          pikachuState.selected = -1;
+          renderPikachu();
+        }, 400);
+      }
+    }
+
+    function shuffleRemaining() {
+      var alive = [];
+      var positions = [];
+      for (var i = 0; i < pikachuState.cells.length; i++) {
+        var c = pikachuState.cells[i];
+        if (c.empty || c.matched) continue;
+        alive.push(c);
+        positions.push(i);
+      }
+      if (alive.length < 2) return;
+      var attempts = 0;
+      while (attempts < 500) {
+        shuffleArray(alive);
+        for (var k = 0; k < positions.length; k++) {
+          pikachuState.cells[positions[k]] = alive[k];
+        }
+        if (hasAnySolvablePair()) break;
+        attempts++;
+      }
+      pikachuState.selected = -1;
+      renderPikachu();
+      document.getElementById('pikachu-msg').textContent = "Đã tự xáo trộn để tiếp tục chơi!";
+    }
+
+    function showPikachuResult() {
+      var resultEl = document.getElementById('pikachu-result');
+      var listEl = document.getElementById('pikachu-result-list');
+      listEl.innerHTML = '';
+      var seen = {};
+      for (var i = 0; i < pikachuState.wordList.length; i++) {
+        var w = pikachuState.wordList[i];
+        if (seen[w.hanzi]) continue;
+        seen[w.hanzi] = 1;
+        var li = document.createElement('li');
+        li.innerHTML =
+          '<span class="r-hanzi">' + w.hanzi + '</span> ' +
+          '<span class="r-pinyin">/' + w.pinyin + '/</span>: ' +
+          '<span class="r-meaning">' + w.meaning + '</span>';
+        listEl.appendChild(li);
+      }
+      resultEl.classList.add('show');
+      document.getElementById('pikachu-msg').textContent = "🎉 Hoàn thành! Điểm: " + pikachuState.score;
+    }
+
+    function pikachuHint() {
+      if (!pikachuState.running) return;
+      for (var i = 0; i < pikachuState.cells.length; i++) {
+        if (pikachuState.cells[i].empty || pikachuState.cells[i].matched) continue;
+        for (var j = i + 1; j < pikachuState.cells.length; j++) {
+          if (pikachuState.cells[j].empty || pikachuState.cells[j].matched) continue;
+          if (pikachuState.cells[i].wordIdx !== pikachuState.cells[j].wordIdx) continue;
+          if (pikachuState.cells[i].charIdx === pikachuState.cells[j].charIdx) continue;
+          if (canConnectPikachu(i, j)) {
+            var board = document.getElementById('pikachu-board');
+            var pA = playToPad(i);
+            var pB = playToPad(j);
+            var elA = board.children[pA.r * PAD_COLS + pA.c];
+            var elB = board.children[pB.r * PAD_COLS + pB.c];
+            if (elA) elA.style.background = '#C8E6C9';
+            if (elB) elB.style.background = '#C8E6C9';
+            drawPikachuLine(i, j);
+            document.getElementById('pikachu-msg').textContent = "💡 Gợi ý: 2 ô màu xanh.";
+            setTimeout(function(){ renderPikachu(); }, 1200);
+            return;
+          }
+        }
+      }
+      document.getElementById('pikachu-msg').textContent = "Không tìm thấy cặp nối được. Hãy bấm Ván mới!";
+    }
+
+    // --------------------- QUIZ ---------------------
+    var quizQuestions = [];
+    var quizAnswered = 0;
+    var quizRunning = false;
+
+    function resetQuizIdle() {
+      quizRunning = false;
+      quizQuestions = [];
+      quizAnswered = 0;
+      document.getElementById('quiz-idle').style.display = 'flex';
+      document.getElementById('quiz-play').style.display = 'none';
+      closeQuizResult();
+    }
+
+    function startQuiz() {
+      closeQuizResult();
+      quizRunning = true;
+      document.getElementById('quiz-idle').style.display = 'none';
+      document.getElementById('quiz-play').style.display = 'flex';
+      newQuiz();
+    }
+
+    function newQuiz() {
+      var vocab = getUniqueVocab();
+      if (vocab.length < 4) {
+        document.getElementById('quiz-list').innerHTML = '<p style="color:red;text-align:center;">Cần ít nhất 4 từ vựng.</p>';
+        return;
+      }
+      var chosen = pickDistinctForPikachu(vocab.slice(), 10);
+      if (chosen.length < 10) {
+        var remain = vocab.filter(function(w){
+          for (var x = 0; x < chosen.length; x++) if (chosen[x].hanzi === w.hanzi) return false;
+          return true;
+        });
+        shuffleArray(remain);
+        while (chosen.length < 10 && remain.length) chosen.push(remain.shift());
+      }
+
+      quizQuestions = [];
+      for (var i = 0; i < chosen.length; i++) {
+        var w = chosen[i];
+        var others = vocab.filter(function(x){ return x.hanzi !== w.hanzi; });
+        shuffleArray(others);
+        var cleanOthers = others.filter(function(x){ return !meaningsOverlap(x.meaning, w.meaning); });
+        if (cleanOthers.length < 3) cleanOthers = others;
+        var distractors = cleanOthers.slice(0, 3).map(function(x){ return x.meaning; });
+        var options = [w.meaning].concat(distractors);
+        shuffleArray(options);
+        quizQuestions.push({
+          hanzi: w.hanzi,
+          pinyin: w.pinyin,
+          correct: w.meaning,
+          options: options,
+          chosen: null,
+          submitted: false
+        });
+      }
+      quizAnswered = 0;
+      document.getElementById('quiz-submit-btn').style.display = '';
+      document.getElementById('quiz-retry-btn').style.display = 'none';
+      var nameInput = document.getElementById('quiz-name');
+      nameInput.classList.remove('error');
+      renderQuiz();
+    }
+
+    function renderQuiz() {
+      var list = document.getElementById('quiz-list');
+      list.innerHTML = '';
+      for (var i = 0; i < quizQuestions.length; i++) {
+        var q = quizQuestions[i];
+        var qDiv = document.createElement('div');
+        qDiv.className = 'quiz-q';
+        qDiv.setAttribute('data-qidx', i);
+
+        var title = document.createElement('div');
+        title.className = 'quiz-q-title';
+        title.innerHTML = '<span class="q-num">Câu ' + (i+1) + '.</span> Từ <span class="q-hanzi">' + q.hanzi + '</span>' +
+          '<span class="q-pinyin-inline">/' + q.pinyin + '/</span> có nghĩa là gì?';
+        qDiv.appendChild(title);
+
+        var opts = document.createElement('div');
+        opts.className = 'quiz-options';
+        var keys = ['A','B','C','D'];
+        for (var k = 0; k < q.options.length; k++) {
+          var opt = document.createElement('div');
+          opt.className = 'quiz-opt';
+          opt.setAttribute('data-opt', k);
+          opt.innerHTML = '<span class="opt-key">' + keys[k] + '</span><span>' + q.options[k] + '</span>';
+          opt.onclick = (function(qi, oi){ return function(){ selectQuizOption(qi, oi); }; })(i, k);
+          opts.appendChild(opt);
+        }
+        qDiv.appendChild(opts);
+        list.appendChild(qDiv);
+      }
+    }
+
+    function selectQuizOption(qIdx, oIdx) {
+      if (!quizRunning) return;
+      var q = quizQuestions[qIdx];
+      if (q.submitted) return;
+      q.chosen = oIdx;
+      var qDiv = document.querySelector('.quiz-q[data-qidx="' + qIdx + '"]');
+      var opts = qDiv.querySelectorAll('.quiz-opt');
+      for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+      opts[oIdx].classList.add('selected');
+      var count = 0;
+      for (var j = 0; j < quizQuestions.length; j++) if (quizQuestions[j].chosen !== null) count++;
+      quizAnswered = count;
+    }
+
+    function submitQuiz() {
+      if (!quizRunning) return;
+      var nameInput = document.getElementById('quiz-name');
+      var name = nameInput.value.trim();
+      if (!name) {
+        nameInput.classList.add('error');
+        nameInput.focus();
+        nameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        alert('Vui lòng nhập tên của bạn trước khi kiểm tra!');
+        return;
+      }
+      nameInput.classList.remove('error');
+
+      if (quizAnswered < quizQuestions.length) {
+        alert('Bạn cần làm đủ ' + quizQuestions.length + ' câu mới được kiểm tra! (Đã làm: ' + quizAnswered + '/' + quizQuestions.length + ')');
+        return;
+      }
+
+      var correctCount = 0;
+      var wrongList = [];
+      for (var i = 0; i < quizQuestions.length; i++) {
+        var q = quizQuestions[i];
+        q.submitted = true;
+        var qDiv = document.querySelector('.quiz-q[data-qidx="' + i + '"]');
+        var opts = qDiv.querySelectorAll('.quiz-opt');
+        var correctIdx = q.options.indexOf(q.correct);
+        for (var k = 0; k < opts.length; k++) {
+          opts[k].classList.remove('selected');
+          if (k === correctIdx) opts[k].classList.add('correct-ans');
+          if (k === q.chosen && k !== correctIdx) opts[k].classList.add('wrong-ans');
+        }
+        var isCorrect = (q.chosen === correctIdx);
+        if (isCorrect) {
+          correctCount++;
+          qDiv.classList.add('correct');
+        } else {
+          qDiv.classList.add('wrong');
+          wrongList.push({
+            index: i + 1,
+            hanzi: q.hanzi,
+            pinyin: q.pinyin,
+            correct: q.correct,
+            yours: q.options[q.chosen]
+          });
+        }
+      }
+
+      showQuizResult(name, correctCount, wrongList);
+      document.getElementById('quiz-submit-btn').style.display = 'none';
+      document.getElementById('quiz-retry-btn').style.display = '';
+    }
+
+    function showQuizResult(name, correctCount, wrongList) {
+      document.getElementById('qr-name').textContent = name;
+      var total = quizQuestions.length;
+      document.getElementById('qr-score').innerHTML =
+        '<span style="color:#2E7D32;">' + correctCount + '</span>/' + total + ' <small>câu đúng</small>';
+
+      var wrap = document.getElementById('qr-wrong-wrap');
+      wrap.innerHTML = '';
+      if (wrongList.length === 0) {
+        var perfect = document.createElement('div');
+        perfect.className = 'qr-perfect';
+        perfect.textContent = 'Tuyệt vời! Bạn trả lời đúng tất cả!';
+        wrap.appendChild(perfect);
+      } else {
+        var title = document.createElement('div');
+        title.className = 'qr-wrong-title';
+        title.textContent = 'Các câu sai (' + wrongList.length + '):';
+        wrap.appendChild(title);
+
+        var ul = document.createElement('ul');
+        ul.className = 'qr-wrong-list';
+        for (var i = 0; i < wrongList.length; i++) {
+          var w = wrongList[i];
+          var li = document.createElement('li');
+          li.innerHTML =
+            '<span class="qr-qnum">Câu ' + w.index + ':</span> ' +
+            '<span class="qr-hanzi">' + w.hanzi + '</span> ' +
+            '<span class="qr-pinyin">/' + w.pinyin + '/</span> : ' +
+            '<span class="qr-meaning">' + w.correct + '</span>' +
+            '<span class="qr-yours">Bạn chọn: ' + w.yours + '</span>';
+          ul.appendChild(li);
+        }
+        wrap.appendChild(ul);
+      }
+      document.getElementById('quizResultModal').classList.add('show');
+    }
+
+    function closeQuizResult(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('quizResultModal').classList.remove('show');
+    }
+
+    // =====================================================================
+    // ================= GAME 3: ĐÚNG/SAI NHANH (TFS) =====================
+    // =====================================================================
+    var TFS_TOTAL = 20;
+    var TFS_TIME_MS = 4000;
+    var tfsState = {
+      questions: [],
+      current: 0,
+      correct: 0,
+      combo: 0,
+      maxCombo: 0,
+      wrong: [],
+      locked: false,
+      running: false,
+      timerId: null,
+      timerStart: 0
+    };
+
+    function resetTFSIdle() {
+      stopTFSTimer();
+      tfsState.running = false;
+      tfsState.locked = true;
+      tfsState.questions = [];
+      tfsState.current = 0;
+      tfsState.correct = 0;
+      tfsState.combo = 0;
+      tfsState.maxCombo = 0;
+      tfsState.wrong = [];
+      document.getElementById('tfs-idle').style.display = 'flex';
+      document.getElementById('tfs-play').classList.remove('show');
+      document.getElementById('tfs-fireworks').innerHTML = '';
+      document.getElementById('tfs-combo').classList.remove('show');
+      document.getElementById('tfs-note').textContent = "";
+      document.getElementById('tfs-reveal').textContent = "";
+      document.getElementById('tfs-timer-fill').style.width = '100%';
+      document.getElementById('tfs-timer-fill').classList.remove('warn');
+      closeTFSResult();
+    }
+
+    function startTFS() {
+      closeTFSResult();
+      var vocab = getUniqueVocab();
+      if (vocab.length < 4) {
+        document.getElementById('tfs-idle').style.display = 'flex';
+        alert("Cần ít nhất 4 từ vựng để chơi.");
+        return;
+      }
+      var chosen = pickDistinctForPikachu(vocab.slice(), TFS_TOTAL);
+      if (chosen.length < TFS_TOTAL) {
+        var used = {};
+        for (var x = 0; x < chosen.length; x++) used[chosen[x].hanzi] = 1;
+        var remain = vocab.filter(function(w){ return !used[w.hanzi]; });
+        shuffleArray(remain);
+        while (chosen.length < TFS_TOTAL && remain.length) chosen.push(remain.shift());
+      }
+
+      var qs = [];
+      for (var i = 0; i < chosen.length; i++) {
+        var w = chosen[i];
+        var others = vocab.filter(function(z){ return z.hanzi !== w.hanzi; });
+        var clean = others.filter(function(z){ return !meaningsOverlap(z.meaning, w.meaning); });
+        if (clean.length < 1) clean = others;
+        shuffleArray(clean);
+        var isTrue = Math.random() < 0.5;
+        var shown = w.meaning;
+        if (!isTrue) {
+          shown = clean[0].meaning;
+          if (meaningsOverlap(shown, w.meaning)) {
+            isTrue = true;
+            shown = w.meaning;
+          }
+        }
+        qs.push({
+          hanzi: w.hanzi,
+          pinyin: w.pinyin,
+          meaningShown: shown,
+          isCorrect: isTrue,
+          correctMeaning: w.meaning
+        });
+      }
+      var hasTrue = false, hasFalse = false;
+      for (var t = 0; t < qs.length; t++) {
+        if (qs[t].isCorrect) hasTrue = true; else hasFalse = true;
+      }
+      if (!hasTrue || !hasFalse) {
+        var idxFlip = Math.floor(Math.random() * qs.length);
+        var wFlip = null;
+        for (var v = 0; v < vocab.length; v++) {
+          if (vocab[v].hanzi === qs[idxFlip].hanzi) { wFlip = vocab[v]; break; }
+        }
+        if (wFlip) {
+          if (!hasTrue) {
+            qs[idxFlip].meaningShown = wFlip.meaning;
+            qs[idxFlip].isCorrect = true;
+            qs[idxFlip].correctMeaning = wFlip.meaning;
+          } else {
+            var oth = vocab.filter(function(z){ return z.hanzi !== wFlip.hanzi; });
+            shuffleArray(oth);
+            qs[idxFlip].meaningShown = oth[0].meaning;
+            qs[idxFlip].isCorrect = false;
+            qs[idxFlip].correctMeaning = wFlip.meaning;
+          }
+        }
+      }
+
+      tfsState.questions = qs;
+      tfsState.current = 0;
+      tfsState.correct = 0;
+      tfsState.combo = 0;
+      tfsState.maxCombo = 0;
+      tfsState.wrong = [];
+      tfsState.locked = false;
+      tfsState.running = true;
+
+      document.getElementById('tfs-total').textContent = qs.length;
+      document.getElementById('tfs-combo').classList.remove('show');
+      document.getElementById('tfs-fireworks').innerHTML = '';
+      document.getElementById('tfs-idle').style.display = 'none';
+      document.getElementById('tfs-play').classList.add('show');
+      showTFSQuestion();
+    }
+
+    function stopTFS() {
+      if (!tfsState.running) return;
+      var ok = confirm('Bạn muốn kết thúc lượt chơi này?');
+      if (!ok) return;
+      resetTFSIdle();
+    }
+
+    function showTFSQuestion() {
+      var q = tfsState.questions[tfsState.current];
+      if (!q) return;
+      tfsState.locked = false;
+      document.getElementById('tfs-current').textContent = tfsState.current + 1;
+      document.getElementById('tfs-hanzi').textContent = q.hanzi;
+      document.getElementById('tfs-pinyin').textContent = q.pinyin;
+      document.getElementById('tfs-meaning').textContent = q.meaningShown;
+      document.getElementById('tfs-reveal').textContent = "";
+      var card = document.getElementById('tfs-card');
+      card.classList.remove('flash-wrong', 'flash-timeout');
+      var btnT = document.getElementById('tfs-btn-true');
+      var btnF = document.getElementById('tfs-btn-false');
+      btnT.disabled = false; btnF.disabled = false;
+      btnT.classList.remove('pulse-true');
+      btnF.classList.remove('pulse-false');
+      startTFSTimer();
+    }
+
+    function startTFSTimer() {
+      if (tfsState.timerId) clearInterval(tfsState.timerId);
+      var fill = document.getElementById('tfs-timer-fill');
+      fill.classList.remove('warn');
+      fill.style.width = '100%';
+      tfsState.timerStart = Date.now();
+      tfsState.timerId = setInterval(function(){
+        if (!tfsState.running) return;
+        var elapsed = Date.now() - tfsState.timerStart;
+        var left = TFS_TIME_MS - elapsed;
+        if (left <= 0) {
+          clearInterval(tfsState.timerId);
+          tfsState.timerId = null;
+          fill.style.width = '0%';
+          onTFSTimeout();
+          return;
+        }
+        var pct = (left / TFS_TIME_MS) * 100;
+        fill.style.width = pct + '%';
+        if (left <= 1200) fill.classList.add('warn');
+      }, 50);
+    }
+
+    function stopTFSTimer() {
+      if (tfsState.timerId) { clearInterval(tfsState.timerId); tfsState.timerId = null; }
+    }
+
+    function onTFSTimeout() {
+      if (tfsState.locked || !tfsState.running) return;
+      tfsState.locked = true;
+      var q = tfsState.questions[tfsState.current];
+      tfsState.wrong.push({
+        index: tfsState.current + 1,
+        hanzi: q.hanzi,
+        pinyin: q.pinyin,
+        correct: q.correctMeaning
+      });
+      tfsState.combo = 0;
+      updateTFSComboBadge();
+      var card = document.getElementById('tfs-card');
+      card.classList.add('flash-timeout');
+      document.getElementById('tfs-reveal').textContent =
+        'Hết giờ! Đáp án đúng: ' + (q.isCorrect ? 'ĐÚNG' : 'SAI') + ' (' + q.correctMeaning + ')';
+      var btnT = document.getElementById('tfs-btn-true');
+      var btnF = document.getElementById('tfs-btn-false');
+      btnT.disabled = true; btnF.disabled = true;
+      setTimeout(function(){
+        if (!tfsState.running) return;
+        tfsState.current++;
+        if (tfsState.current >= tfsState.questions.length) {
+          showTFSResult();
+        } else {
+          showTFSQuestion();
+        }
+      }, 1000);
+    }
+
+    function answerTFS(userSaysTrue) {
+      if (tfsState.locked || !tfsState.running) return;
+      tfsState.locked = true;
+      stopTFSTimer();
+      var q = tfsState.questions[tfsState.current];
+      var btnT = document.getElementById('tfs-btn-true');
+      var btnF = document.getElementById('tfs-btn-false');
+      btnT.disabled = true; btnF.disabled = true;
+
+      var isRight = (userSaysTrue === q.isCorrect);
+      if (isRight) {
+        tfsState.correct++;
+        tfsState.combo++;
+        if (tfsState.combo > tfsState.maxCombo) tfsState.maxCombo = tfsState.combo;
+        if (userSaysTrue) btnT.classList.add('pulse-true');
+        else btnF.classList.add('pulse-true');
+        updateTFSComboBadge();
+        if (tfsState.combo === 3 || tfsState.combo === 5 || tfsState.combo === 10) {
+          burstFireworks(tfsState.combo);
+        }
+        setTimeout(function(){
+          if (!tfsState.running) return;
+          tfsState.current++;
+          if (tfsState.current >= tfsState.questions.length) {
+            showTFSResult();
+          } else {
+            showTFSQuestion();
+          }
+        }, 220);
+      } else {
+        tfsState.wrong.push({
+          index: tfsState.current + 1,
+          hanzi: q.hanzi,
+          pinyin: q.pinyin,
+          correct: q.correctMeaning
+        });
+        tfsState.combo = 0;
+        updateTFSComboBadge();
+        var card = document.getElementById('tfs-card');
+        card.classList.add('flash-wrong');
+        if (userSaysTrue) btnT.classList.add('pulse-false');
+        else btnF.classList.add('pulse-false');
+        document.getElementById('tfs-reveal').textContent =
+          'Đáp án đúng: ' + (q.isCorrect ? 'ĐÚNG' : 'SAI') + ' (' + q.correctMeaning + ')';
+        setTimeout(function(){
+          if (!tfsState.running) return;
+          tfsState.current++;
+          if (tfsState.current >= tfsState.questions.length) {
+            showTFSResult();
+          } else {
+            showTFSQuestion();
+          }
+        }, 1000);
+      }
+    }
+
+    function updateTFSComboBadge() {
+      var badge = document.getElementById('tfs-combo');
+      if (tfsState.combo >= 2) {
+        badge.textContent = '🔥 x' + tfsState.combo;
+        badge.classList.add('show');
+      } else {
+        badge.classList.remove('show');
+      }
+    }
+
+    function burstFireworks(level) {
+      var container = document.getElementById('tfs-fireworks');
+      if (!container) return;
+      var count = level === 3 ? 22 : (level === 5 ? 36 : 54);
+      var colors = ['#FFD54F', '#FF4081', '#BA68C8', '#FF80AB', '#CE93D8'];
+      var cx = 50 + (Math.random() * 20 - 10);
+      var cy = 40 + (Math.random() * 10 - 5);
+      for (var i = 0; i < count; i++) {
+        var spark = document.createElement('span');
+        spark.className = 'tfs-spark';
+        var angle = Math.random() * Math.PI * 2;
+        var dist = 60 + Math.random() * 140;
+        var dx = Math.cos(angle) * dist;
+        var dy = Math.sin(angle) * dist;
+        spark.style.left = cx + '%';
+        spark.style.top = cy + '%';
+        spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+        spark.style.setProperty('--dx', dx + 'px');
+        spark.style.setProperty('--dy', dy + 'px');
+        spark.style.animationDelay = (Math.random() * 0.15) + 's';
+        spark.style.width = (5 + Math.random() * 5) + 'px';
+        spark.style.height = spark.style.width;
+        container.appendChild(spark);
+        (function(el){
+          setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 1500);
+        })(spark);
+      }
+      if (level === 10) {
+        var txt = document.createElement('div');
+        txt.className = 'tfs-firework-text';
+        txt.textContent = 'TUYỆT VỜI!';
+        container.appendChild(txt);
+        setTimeout(function(){ if (txt.parentNode) txt.parentNode.removeChild(txt); }, 1500);
+      }
+    }
+
+    function burstGrandFireworks() {
+      var container = document.getElementById('tfs-fireworks');
+      if (!container) return;
+      var colors = ['#FFD54F', '#FF4081', '#BA68C8', '#FF80AB', '#CE93D8', '#FFEB3B', '#F06292'];
+      var bursts = [
+        { x: 20, y: 30, count: 40, delay: 0 },
+        { x: 75, y: 25, count: 40, delay: 180 },
+        { x: 50, y: 50, count: 55, delay: 360 },
+        { x: 30, y: 65, count: 40, delay: 540 },
+        { x: 70, y: 60, count: 40, delay: 720 }
+      ];
+      for (var b = 0; b < bursts.length; b++) {
+        (function(burst){
+          setTimeout(function(){
+            for (var i = 0; i < burst.count; i++) {
+              var spark = document.createElement('span');
+              spark.className = 'tfs-spark';
+              var angle = Math.random() * Math.PI * 2;
+              var dist = 80 + Math.random() * 180;
+              var dx = Math.cos(angle) * dist;
+              var dy = Math.sin(angle) * dist;
+              spark.style.left = burst.x + '%';
+              spark.style.top = burst.y + '%';
+              spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+              spark.style.setProperty('--dx', dx + 'px');
+              spark.style.setProperty('--dy', dy + 'px');
+              spark.style.animationDelay = (Math.random() * 0.12) + 's';
+              var sz = 6 + Math.random() * 6;
+              spark.style.width = sz + 'px';
+              spark.style.height = sz + 'px';
+              container.appendChild(spark);
+              (function(el){
+                setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 1600);
+              })(spark);
+            }
+          }, burst.delay);
+        })(bursts[b]);
+      }
+      var txt = document.createElement('div');
+      txt.className = 'tfs-firework-text';
+      txt.style.fontSize = '1.8rem';
+      txt.style.color = '#FF4081';
+      txt.textContent = 'HOÀN HẢO 100%!';
+      container.appendChild(txt);
+      setTimeout(function(){ if (txt.parentNode) txt.parentNode.removeChild(txt); }, 2000);
+    }
+
+    function showTFSResult() {
+      stopTFSTimer();
+      tfsState.running = false;
+      var total = tfsState.questions.length;
+      if (tfsState.correct === total && total > 0) {
+        burstGrandFireworks();
+      }
+      document.getElementById('tfs-r-score').innerHTML =
+        '<span style="color:#2E7D32;">' + tfsState.correct + '</span>/' + total + ' <small>câu đúng</small>';
+      var wrap = document.getElementById('tfs-r-wrong-wrap');
+      wrap.innerHTML = '';
+      if (tfsState.wrong.length === 0) {
+        var perfect = document.createElement('div');
+        perfect.className = 'tfs-r-perfect';
+        perfect.textContent = 'Tuyệt vời! Bạn trả lời đúng tất cả!';
+        wrap.appendChild(perfect);
+      } else {
+        var title = document.createElement('div');
+        title.className = 'tfs-r-wrong-title';
+        title.textContent = 'Các câu sai (' + tfsState.wrong.length + '):';
+        wrap.appendChild(title);
+        var ul = document.createElement('ul');
+        ul.className = 'tfs-r-wrong-list';
+        for (var i = 0; i < tfsState.wrong.length; i++) {
+          var w = tfsState.wrong[i];
+          var li = document.createElement('li');
+          li.innerHTML =
+            '<span class="tfs-r-qnum">Câu ' + w.index + ':</span> ' +
+            '<span class="tfs-r-hanzi">' + w.hanzi + '</span> ' +
+            '<span class="tfs-r-pinyin">/' + w.pinyin + '/</span> : ' +
+            '<span class="tfs-r-meaning">' + w.correct + '</span>';
+          ul.appendChild(li);
+        }
+        wrap.appendChild(ul);
+      }
+      document.getElementById('tfsResultModal').classList.add('show');
+    }
+
+    function closeTFSResult(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('tfsResultModal').classList.remove('show');
+    }
+
+    window.onload = function() {
+      try {
+        if (!vocabulary || vocabulary.length === 0) {
+          document.getElementById('flashcard-grid').innerHTML = '<p style="grid-column: span 2; text-align: center; color: red; font-weight: bold; padding: 20px;">LỖI: Mảng từ vựng rỗng!</p>';
+          return;
+        }
+        renderList();
+        shuffleCards(true);
+        resetAllGamesIdle();
+      } catch (e) {
+        document.getElementById('flashcard-grid').innerHTML = '<p style="grid-column: span 2; text-align: center; color: red; font-weight: bold; padding: 20px;">LỖI JS: ' + e.message + '</p>';
+        console.error(e);
+      }
+    };
+  </script>
+</body>
+</html>
